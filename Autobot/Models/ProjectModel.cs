@@ -4,12 +4,12 @@ namespace Autobot.Models
 {
 	public class ProjectModel(string clientName, ProjectType projectType, ProjectCategory projectCategory, string rogueProjectName)
 	{
-		internal string ClientName { get; set; } = clientName;
+		public string ClientName { get; set; } = clientName;
 
-		internal ProjectType ProjectType { get; set; } = projectType;
+		public ProjectType ProjectType { get; set; } = projectType;
 
-		internal ProjectCategory ProjectCategory { get; set; } = projectCategory;
+		public ProjectCategory ProjectCategory { get; set; } = projectCategory;
 
-		internal string RogueProjectName { get; set; } = rogueProjectName;
+		public string RogueProjectName { get; set; } = rogueProjectName;
 	}
 }
