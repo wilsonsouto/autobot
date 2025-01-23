@@ -2,8 +2,5 @@
 
 internal class Program
 {
-    private static void Main(string[] args)
-    {
-        ProjectView.RunMenu();
-    }
+	private static void Main(string[] args) => ProjectView.RunMenu();
 }

@@ -1,22 +1,22 @@
 namespace Autobot.Enums
 {
-    public enum ProjectType
-    {
-        Deterministico,
+	public enum ProjectType
+	{
+		Deterministico,
 
-        Generativo,
-    }
+		Generativo,
+	}
 
-    public enum ProjectCategory
-    {
-        Aquisicao,
+	public enum ProjectCategory
+	{
+		Aquisicao,
 
-        Negociador,
+		Negociador,
 
-        Localizador,
+		Localizador,
 
-        Psat,
+		Psat,
 
-        Whatsapp,
-    }
+		Whatsapp,
+	}
 }
