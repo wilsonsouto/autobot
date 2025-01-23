@@ -14,7 +14,7 @@ public static class ProjectHelper
 		{
 			using (FileStream fs = File.Create(Path.Combine(filePath)))
 			{
-				Console.WriteLine($"File {fileName} was created in {pathFolder}");
+				Console.WriteLine($"Arquivo '{fileName}' foi criado em '{pathFolder}'");
 			}
 
 			using (StreamWriter writer = new StreamWriter(Path.Combine(filePath)))
@@ -25,7 +25,7 @@ public static class ProjectHelper
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine($"An error occurred: {ex.Message}");
+			Console.WriteLine($"Um erro ocorreu durante a execução: {ex.Message}");
 		}
 	}
 }

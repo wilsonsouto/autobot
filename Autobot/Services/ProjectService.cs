@@ -37,26 +37,32 @@ namespace Autobot.Services
 
 				var projectType = AnsiConsole.Prompt(
 					new SelectionPrompt<ProjectType>()
-						.Title("Selecione o tipo: ")
+						.Title("Selecione o tipo do bot: ")
 						.AddChoices(ProjectType.Deterministico, ProjectType.Generativo)
 				);
 
 				var projectCategory = projectType == ProjectType.Deterministico
 					? AnsiConsole.Prompt(
 						new SelectionPrompt<ProjectCategory>()
-							.Title("Selecione a categoria: ")
+							.Title("Selecione a categoria do bot: ")
 							.AddChoices(
 								ProjectCategory.Aquisicao,
 								ProjectCategory.Localizador,
 								ProjectCategory.Negociador,
+								ProjectCategory.Preventivo,
+								ProjectCategory.Ura,
 								ProjectCategory.Psat
 							)
 					)
 					: AnsiConsole.Prompt(
 						new SelectionPrompt<ProjectCategory>()
-							.Title("Selecione a categoria: ")
-							.AddChoices(ProjectCategory.Whatsapp)
+							.Title("Selecione a categoria do bot: ")
+							.AddChoices(
+								ProjectCategory.Negociador,
+								ProjectCategory.Whatsapp
+							)
 					);
+
 				Console.Write("Nome do projeto Rogue: ");
 				var rogueProjectName = Console.ReadLine() ?? "";
 
@@ -66,14 +72,13 @@ namespace Autobot.Services
 
 		public void ConfigurationFile(ProjectModel project)
 		{
-			var databaseConnectionName = $"{project.ClientName}_{project.ProjectType}_{project.ProjectCategory}".ToUpper();
 			var (pascalCaseProject, camelCaseProject) = project.GetProjectNameVariations();
 
 			var templatePath = Configuration.DataPath + "/ConfigurationFile.txt";
 			var content = File.ReadAllText(templatePath);
-			
+
 			content = content
-	   					.Replace("{{databaseConnectionName}}", databaseConnectionName)
+	   					.Replace("{{databaseConnectionName}}", pascalCaseProject.ToUpper())
 	   					.Replace("{{camelCaseProject}}", camelCaseProject);
 
 			ProjectHelper.CreateAndWriteToFile("config", content, project);

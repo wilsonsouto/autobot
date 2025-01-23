@@ -17,6 +17,10 @@ namespace Autobot.Enums
 
 		Psat,
 
+		Preventivo,
+
+		Ura,
+
 		Whatsapp,
 	}
 }
