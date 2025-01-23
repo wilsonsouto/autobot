@@ -1,4 +1,4 @@
-using Autobot.Controllers;
+using Autobot.Services;
 
 namespace Autobot.Views
 {
@@ -6,8 +6,9 @@ namespace Autobot.Views
 	{
 		internal static void RunMenu()
 		{
-			var projectController = new ProjectController();
-			var result = projectController.GetUserInput();
+			var projectService = new ProjectService();
+			var result = projectService.GetUserInput();
+			projectService.ConfigurationFile(result);
 		}
 	}
 }
