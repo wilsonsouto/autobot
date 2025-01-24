@@ -1,31 +1,45 @@
 using Autobot.Models;
 
-namespace Autobot.Helpers;
-
-public static class ProjectHelper
+namespace Autobot.Helpers
 {
-	internal static void CreateAndWriteToFile(string pathFolder, string content, ProjectModel project)
+	public class ProjectHelper
 	{
-		var (pascalCaseProject, camelCaseProject) = project.GetProjectNameVariations();
-		var fileName = pascalCaseProject + ".ts";
-		var filePath = Path.Combine(Configuration.ConsumerPath + pathFolder, fileName);
-
-		try
+		public static List<string> GetProjectNameVariations(ProjectModel project)
 		{
-			using (FileStream fs = File.Create(Path.Combine(filePath)))
-			{
-				Console.WriteLine($"Arquivo '{fileName}' foi criado em '{pathFolder}'");
-			}
+			var words = project.ClientName.Split([' '], StringSplitOptions.RemoveEmptyEntries);
 
-			using (StreamWriter writer = new StreamWriter(Path.Combine(filePath)))
-			{
-				writer.Write(content);
-			}
+			var pascalCase = string.Concat(words.Select(word => char.ToUpper(word[0]) + word[1..].ToLower()));
 
+			var camelCase = char.ToLower(pascalCase[0]) + pascalCase[1..];
+
+			var pascalCaseProjectName = $"{pascalCase}{project.ProjectType}{project.ProjectCategory}";
+			var camelCaseProjectName = $"{camelCase}{project.ProjectType}{project.ProjectCategory}";
+
+			return [pascalCaseProjectName, camelCaseProjectName];
 		}
-		catch (Exception ex)
+
+		public static void CreateAndWriteToFile(string pathFolder, string content, ProjectModel project)
 		{
-			Console.WriteLine($"Um erro ocorreu durante a execução: {ex.Message}");
+			var fileName = project.PascalCaseProjectName + ".ts";
+			var filePath = Path.Combine(Configuration.ConsumerPath + pathFolder, fileName);
+
+			try
+			{
+				using (FileStream fs = File.Create(Path.Combine(filePath)))
+				{
+					Console.WriteLine($"Arquivo '{fileName}' foi criado em '{pathFolder}'");
+				}
+
+				using (StreamWriter writer = new StreamWriter(Path.Combine(filePath)))
+				{
+					writer.Write(content);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Um erro ocorreu durante a execução: {ex.Message}");
+			}
 		}
 	}
 }
