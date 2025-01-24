@@ -12,6 +12,8 @@ namespace Autobot.Views
 			{
 				while (true)
 				{
+					Console.Clear();
+					
 					Console.Write("Nome do cliente: ");
 					var clientName = Console.ReadLine();
 
