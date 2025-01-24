@@ -40,7 +40,15 @@ namespace Autobot.Services
 			ProjectHelper.CreateAndWriteToFile("config", "Config", content, project);
 		}
 
-		public void ConnectionFile(ProjectModel project) => throw new NotImplementedException();
+		public void ConnectionFile(ProjectModel project)
+		{
+			var templatePath = Configuration.DataPath + "/ConnectionFile.txt";
+			var content = File.ReadAllText(templatePath);
+
+			content = content.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
+
+			ProjectHelper.CreateAndWriteToFile("database/connections", "Connection", content, project);
+		}
 
 		public void EntitiesFile(ProjectModel project) => throw new NotImplementedException();
 

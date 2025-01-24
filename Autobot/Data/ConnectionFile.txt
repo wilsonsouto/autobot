@@ -1,0 +1,9 @@
+
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import BaseDatabaseConnection from './BaseDatabaseConnection';
+
+export default new BaseDatabaseConnection ({
+  name: {{pascalCaseProjectName}}Config.orm.name as string,
+  enabled: {{pascalCaseProjectName}}Config.enabled,
+  connectionOptions: {{pascalCaseProjectName}}Config.orm,
+});

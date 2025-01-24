@@ -9,5 +9,6 @@ internal class Program
 
 		ProjectService service = new();
 		service.ConfigurationFile(project);
+		service.ConnectionFile(project);
 	}
 }
