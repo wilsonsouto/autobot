@@ -26,11 +26,14 @@ namespace Autobot.Services
 	{
 		public void ConfigurationFile(ProjectModel project)
 		{
+			var databaseConnectionName =
+			$"{project.DatabaseConnectionName}_{project.ProjectType}_{project.ProjectCategory}".ToUpper();
+			
 			var templatePath = Configuration.DataPath + "/ConfigurationFile.txt";
 			var content = File.ReadAllText(templatePath);
 
 			content = content
-						   .Replace("{{databaseConnectionName}}", project.PascalCaseProjectName.ToUpper())
+						   .Replace("{{databaseConnectionName}}", databaseConnectionName)
 						   .Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
 
 

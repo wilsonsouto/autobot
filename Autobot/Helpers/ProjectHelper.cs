@@ -6,16 +6,16 @@ namespace Autobot.Helpers
 	{
 		public static List<string> GetProjectNameVariations(ProjectModel project)
 		{
-			var words = project.ClientName.Split([' '], StringSplitOptions.RemoveEmptyEntries);
+			var clientWords = project.ClientName.Split([' '], StringSplitOptions.RemoveEmptyEntries);
 
-			var pascalCase = string.Concat(words.Select(word => char.ToUpper(word[0]) + word[1..].ToLower()));
+			var formattedName = string.Concat(clientWords.Select(word => char.ToUpper(word[0]) + word[1..].ToLower()));
 
-			var camelCase = char.ToLower(pascalCase[0]) + pascalCase[1..];
+			var camelCaseName = char.ToLower(formattedName[0]) + formattedName[1..];
 
-			var pascalCaseProjectName = $"{pascalCase}{project.ProjectType}{project.ProjectCategory}";
-			var camelCaseProjectName = $"{camelCase}{project.ProjectType}{project.ProjectCategory}";
+			var pascalCaseProjectName = $"{formattedName}{project.ProjectType}{project.ProjectCategory}";
+			var camelCaseProjectName = $"{camelCaseName}{project.ProjectType}{project.ProjectCategory}";
 
-			return [pascalCaseProjectName, camelCaseProjectName];
+			return [formattedName, pascalCaseProjectName, camelCaseProjectName];
 		}
 
 		public static void CreateAndWriteToFile(string pathFolder, string filePrefix, string content, ProjectModel project)

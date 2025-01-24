@@ -13,6 +13,8 @@ namespace Autobot.Models
 
 		public string RogueProjectName { get; set; }
 
+		public string DatabaseConnectionName { get; set; } = string.Empty;
+
 		public string PascalCaseProjectName { get; set; } = string.Empty;
 
 		public string CamelCaseProjectName { get; set; } = string.Empty;
@@ -29,8 +31,9 @@ namespace Autobot.Models
 		private void InitializeProjectNameVariations()
 		{
 			var variants = ProjectHelper.GetProjectNameVariations(this);
-			PascalCaseProjectName = variants[0];
-			CamelCaseProjectName = variants[1];
+			DatabaseConnectionName = variants[0];
+			PascalCaseProjectName = variants[1];
+			CamelCaseProjectName = variants[2];
 		}
 	}
 }
