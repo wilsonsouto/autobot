@@ -1,6 +1,13 @@
-﻿using Autobot.Views;
+﻿using Autobot.Services;
+using Autobot.Views;
 
 internal class Program
 {
-	private static void Main(string[] args) => ProjectView.RunMenu();
+	private static void Main(string[] args)
+	{
+		var project = ProjectView.RunMenu();
+
+		ProjectService service = new();
+		service.ConfigurationFile(project);
+	}
 }

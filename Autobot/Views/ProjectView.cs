@@ -1,14 +1,66 @@
-using Autobot.Services;
+using Autobot.Enums;
+using Autobot.Helpers;
+using Autobot.Models;
+using Spectre.Console;
 
 namespace Autobot.Views
 {
 	internal class ProjectView
 	{
-		internal static void RunMenu()
+		internal static ProjectModel RunMenu()
 		{
-			var projectService = new ProjectService();
-			var result = projectService.GetUserInput();
-			projectService.ConfigurationFile(result);
+			{
+				while (true)
+				{
+					Console.Write("Nome do cliente: ");
+					var clientName = Console.ReadLine();
+
+					while (!ValidationHelper.IsStringValid(clientName))
+					{
+						Console.Write("Insira o nome de cliente válido: ");
+						clientName = Console.ReadLine();
+					}
+
+					var projectType = AnsiConsole.Prompt(
+						new SelectionPrompt<ProjectType>()
+							.Title("Selecione o tipo do bot: ")
+							.AddChoices(ProjectType.Deterministico, ProjectType.Generativo)
+					);
+
+					var projectCategory = projectType == ProjectType.Deterministico
+						? AnsiConsole.Prompt(
+							new SelectionPrompt<ProjectCategory>()
+								.Title("Selecione a categoria do bot: ")
+								.AddChoices(
+									ProjectCategory.Aquisicao,
+									ProjectCategory.Localizador,
+									ProjectCategory.Negociador,
+									ProjectCategory.Preventivo,
+									ProjectCategory.Ura,
+									ProjectCategory.Psat
+								)
+						)
+						: AnsiConsole.Prompt(
+							new SelectionPrompt<ProjectCategory>()
+								.Title("Selecione a categoria do bot: ")
+								.AddChoices(
+									ProjectCategory.Negociador,
+									ProjectCategory.Whatsapp
+								)
+						);
+
+					Console.Write("Nome do projeto Rogue: ");
+					var rogueProjectName = Console.ReadLine();
+
+					while (!ValidationHelper.IsStringValid(rogueProjectName))
+					{
+						Console.Write("Insira o nome do projeto Rogue válido: ");
+						rogueProjectName = Console.ReadLine();
+					}
+
+					return new ProjectModel(clientName!, projectType, projectCategory, rogueProjectName!);
+				}
+			}
 		}
 	}
 }
