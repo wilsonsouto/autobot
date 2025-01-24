@@ -26,32 +26,32 @@ namespace Autobot.Services
 	{
 		public void ConfigurationFile(ProjectModel project)
 		{
-			var pathFolder = "config";
+			var subFolderPath = "config";
 			var filePrefix = "Config";
 			var databaseConnectionName =
 			$"{project.DatabaseConnectionName}_{project.ProjectType}_{project.ProjectCategory}".ToUpper();
 
 			var templatePath = Configuration.DataPath + "/Config.txt";
-			var content = File.ReadAllText(templatePath);
+			var fileContent = File.ReadAllText(templatePath);
 
-			content = content
+			fileContent = fileContent
 						   .Replace("{{databaseConnectionName}}", databaseConnectionName)
 						   .Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
 
 
-			ProjectHelper.CreateAndWriteToFile(pathFolder, filePrefix, content, project);
+			ProjectHelper.CreateAndWriteToFile(subFolderPath, filePrefix, fileContent, project);
 		}
 
 		public void ConnectionFile(ProjectModel project)
 		{
-			var pathFolder = "database/connections";
+			var subFolderPath = "database/connections";
 			var filePrefix = "Connection";
 			var templatePath = Configuration.DataPath + "/Connection.txt";
-			var content = File.ReadAllText(templatePath);
+			var fileContent = File.ReadAllText(templatePath);
 
-			content = content.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
+			fileContent = fileContent.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
 
-			ProjectHelper.CreateAndWriteToFile(pathFolder, filePrefix, content, project);
+			ProjectHelper.CreateAndWriteToFile(subFolderPath, filePrefix, fileContent, project);
 		}
 
 		public void EntitiesFile(ProjectModel project)
