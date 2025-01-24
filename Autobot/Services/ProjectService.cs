@@ -33,7 +33,8 @@ namespace Autobot.Services
 						   .Replace("{{databaseConnectionName}}", project.PascalCaseProjectName.ToUpper())
 						   .Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
 
-			ProjectHelper.CreateAndWriteToFile("config", content, project);
+
+			ProjectHelper.CreateAndWriteToFile("config", "Config", content, project);
 		}
 
 		public void ConnectionFile(ProjectModel project) => throw new NotImplementedException();

@@ -18,9 +18,9 @@ namespace Autobot.Helpers
 			return [pascalCaseProjectName, camelCaseProjectName];
 		}
 
-		public static void CreateAndWriteToFile(string pathFolder, string content, ProjectModel project)
+		public static void CreateAndWriteToFile(string pathFolder, string filePrefix, string content, ProjectModel project)
 		{
-			var fileName = project.PascalCaseProjectName + ".ts";
+			var fileName = project.PascalCaseProjectName + filePrefix + ".ts";
 			var filePath = Path.Combine(Configuration.ConsumerPath + pathFolder, fileName);
 
 			try
