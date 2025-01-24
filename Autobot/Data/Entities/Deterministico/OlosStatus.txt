@@ -1,0 +1,17 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+
+@Entity({{pascalCaseProjectName}}Config.olosStatus, { schema: {{pascalCaseProjectName}}Config.schemaName })
+export class {{pascalCaseProjectName}}OlosStatus {
+  @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
+  id!: string;
+
+  @Column('int', {  name: "spt" })
+  spt!: number;
+
+  @Column('varchar', { name: "descricao_olos", length: 50 })
+  descricaoOlos!: string;
+
+  @Column('int', {  name: "dispositionId" })
+  dispositionId!: number;
+}

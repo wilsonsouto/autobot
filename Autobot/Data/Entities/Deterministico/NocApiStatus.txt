@@ -1,0 +1,26 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+
+@Entity({{pascalCaseProjectName}}Config.nocApiStatus, { schema: {{pascalCaseProjectName}}Config.schemaName })
+export class {{pascalCaseProjectName}}NocApiStatus {
+  @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
+  id!: string;
+
+  @Column('int', {  name: "status_id" })
+  status_id!: number;
+
+  @Column('varchar', { name: "status_chamada", length: 50 })
+  statusChamada!: string;
+
+  @Column('varchar', { name: "status_ivr", length: 50 })
+  statusIVR!: string;
+
+  @Column('varchar', { name: "sub_status_ivr", length: 50 })
+  subStatusIVR!: string;
+
+  @Column('varchar', { name: "cod_finalizacao", length: 50 })
+  codFinalizacao!: string;
+
+  @Column('varchar', { name: 'idEvento', nullable: true, length: 10 })
+  idEvento?: string | null;
+}

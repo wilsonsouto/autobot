@@ -1,0 +1,62 @@
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity({{pascalCaseProjectName}}Config.eventoTableName, { schema: {{pascalCaseProjectName}}Config.schemaName })
+export class {{pascalCaseProjectName}}Evento {
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
+  id!: string;
+
+  @Column('char', { name: 'conversation_id', nullable: true, length: 36 })
+  conversationId!: string | null;
+
+  @Column('int', { name: 'seq', nullable: true })
+  seq!: number | null;
+
+  @Column('datetime', { name: 'event_date', nullable: true })
+  eventDate!: Date | null;
+
+  @Column('varchar', { name: 'event_type', nullable: true, length: 255 })
+  eventType!: string | null;
+
+  @Column('int', { name: 'duration', nullable: true })
+  duration!: number | null;
+
+  @Column('varchar', { name: 'state', nullable: true, length: 50 })
+  state!: string | null;
+
+  @Column('varchar', { name: 'prompt', nullable: true, length: 255 })
+  prompt!: string | null;
+
+  @Column('varchar', { name: 'answer', nullable: true, length: 255 })
+  answer!: string | null;
+
+  @Column('varchar', { name: 'intention', nullable: true, length: 255 })
+  intention!: string | null;
+
+  @Column('varchar', { name: 'entity', nullable: true, length: 255 })
+  entity!: string | null;
+
+  @Column('int', { name: 'spp', nullable: true })
+  spp!: number | null;
+
+  @Column('varchar', { name: 'spt', nullable: true, length: 50 })
+  spt!: string | null;
+
+  @Column('int', { name: 'at', nullable: true })
+  at!: number | null;
+
+  @Column('varchar', { name: 'soa', nullable: true, length: 50 })
+  soa!: string | null;
+
+  @Column('varchar', { name: 'endpoint', nullable: true, length: 4000 })
+  message!: string | null;
+
+  @Column('varchar', { name: 'request', nullable: true, length: 4000 })
+  request!: string | null;
+
+  @Column('longtext', { name: 'response', nullable: true })
+  response!: string | null;
+
+  @Column('decimal', { name: 'resultConfidence', nullable: true })
+  resultConfidence!: string | null;
+}

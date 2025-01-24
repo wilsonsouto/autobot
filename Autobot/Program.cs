@@ -1,4 +1,4 @@
-﻿using Autobot.Services;
+using Autobot.Services;
 using Autobot.Views;
 
 internal class Program
@@ -10,5 +10,6 @@ internal class Program
 		ProjectService service = new();
 		service.ConfigurationFile(project);
 		service.ConnectionFile(project);
+		service.EntitiesFile(project);
 	}
 }

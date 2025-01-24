@@ -1,0 +1,26 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+
+@Entity({{pascalCaseProjectName}}Config.tabulacaoTableName, { schema: {{pascalCaseProjectName}}Config.schemaName })
+export class {{pascalCaseProjectName}}Tabulacao {
+  @PrimaryGeneratedColumn({ type: "bigint", name: "id_tabulacao" })
+  id_tabulacao!: number;
+
+  @Column('varchar', { name: "ds_tabulacao", length: 50 })
+  ds_tabulacao!: string;
+
+  @Column('varchar', { name: "ds_amigavel", length: 100 })
+  ds_amigavel!: string;
+
+  @Column('varchar', { name: "classificacao", length: 50 })
+  classificacao!: string;
+
+  @Column('varchar', { name: "estado", length: 50 })
+  estado!: string;
+
+  @Column('varchar', { name: "proposta", length: 50 })
+  proposta!: string;
+
+  @Column('varchar', { name: "tipo_proposta", length: 50 })
+  tipo_proposta!: string;
+}

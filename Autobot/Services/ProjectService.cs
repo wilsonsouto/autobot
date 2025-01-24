@@ -50,7 +50,31 @@ namespace Autobot.Services
 			ProjectHelper.CreateAndWriteToFile("database/connections", "Connection", content, project);
 		}
 
-		public void EntitiesFile(ProjectModel project) => throw new NotImplementedException();
+		public void EntitiesFile(ProjectModel project)
+		{
+			List<string> EntitiesList =
+			[
+				"Atendimento",
+				"Evento",
+				"NocApiStatus",
+				"OlosStatus",
+				"Tabulacao",
+			];
+
+			var projectTypeFolder = project.ProjectType == Enums.ProjectType.Deterministico ?
+			"Deterministico" : "Generativo";
+
+			foreach (var entitie in EntitiesList)
+			{
+				var subFolderPath = $"models/entities/{project.CamelCaseProjectName}";
+				var templatePath = Configuration.DataPath + $"/Entities/{projectTypeFolder}/{entitie}.txt";
+				var fileContent = File.ReadAllText(templatePath);
+
+				fileContent = fileContent.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
+
+				ProjectHelper.CreateAndWriteToFile(subFolderPath, entitie, fileContent, project);
+			}
+		}
 
 		public void FactoryFile(ProjectModel project) => throw new NotImplementedException();
 

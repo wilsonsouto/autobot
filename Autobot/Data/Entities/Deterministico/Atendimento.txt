@@ -1,0 +1,128 @@
+import { Column, Entity } from 'typeorm';
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import { CDRBaseEntity } from '../cdrBaseEntity/CDRBaseEntity';
+
+@Entity({{pascalCaseProjectName}}Config.atendimentoTableName, { schema: {{pascalCaseProjectName}}Config.schemaName })
+export class {{pascalCaseProjectName}}Atendimento extends CDRBaseEntity {
+  @Column('char', { primary: true, name: 'id_atendimento', length: 70 })
+  idAtendimento!: string;
+
+  @Column('datetime', { name: 'dtini', nullable: true, default: () => 'NOW()' })
+  dtini?: string | null;
+
+  @Column('datetime', { name: 'dtfim', nullable: true })
+  dtfim?: string | null;
+
+  @Column('varchar', { name: 'documento', nullable: true, length: 14 })
+  documento?: string | null;
+
+  @Column('varchar', { name: 'telefone', nullable: true, length: 30 })
+  telefone?: string | null;
+
+  @Column('int', { name: 'spp', nullable: true })
+  spp?: number | null;
+
+  @Column('int', { name: 'spt', nullable: true })
+  spt?: number | null;
+
+  // @Column('int', { name: 'spv', nullable: true })
+  // spv?: number | null;
+
+  @Column('int', { name: 'at', nullable: true })
+  at?: number | null;
+
+  @Column('int', { name: 'conversation_duration', nullable: true })
+  conversationDuration?: number | null;
+
+  @Column('int', { name: 'idcrm', nullable: true })
+  idcrm?: number | null;
+
+  @Column('nvarchar', {
+    name: 'mailing',
+    length: 4000,
+    array: false,
+    default: () => "'{}'",
+    nullable: true,
+  })
+  public mailing!: string;
+
+  @Column({
+    name: 'project_name',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  projectName!: string;
+
+  @Column('varchar', { name: 'origem', nullable: true, length: 30 })
+  origem?: string | null;
+
+  @Column('varchar', { name: 'dna_spp', nullable: true, length: 1000 })
+  dnaSpp?: string | null;
+
+  @Column('varchar', { name: 'dna_spt', nullable: true, length: 1000 })
+  dnaSpt?: string | null;
+
+  // @Column('varchar', { name: 'variaveis', nullable: true, length: 4000 })
+  // variaveis?: string | null;
+
+  @Column('tinyint', { name: 'tipo_identificacao', default: 0 })
+  identificationType?: number;
+
+  @Column('tinyint', { name: 'tipo_telefone', default: 0 })
+  phoneType?: number;
+
+  @Column('char', { name: 'vdn', length: 45, nullable: true })
+  vdn?: string;
+
+  @Column('varchar', { name: 'codigo_cliente', length: 40 })
+  clientCode?: string;
+
+  @Column('varchar', { name: 'record_filename', nullable: true, length: 255 })
+  recordFilename?: string;
+
+  @Column({
+    type: 'json',
+    array: false,
+    // default: () => "'{}'",
+    name: 'tags',
+    nullable: true,
+  })
+  public tags!: { [key: string]: string };
+
+  @Column('tinyint', { name: 'solucao', default: 0 })
+  solution?: number;
+
+  @Column('tinyint', { name: 'tipo_canal', default: 0 })
+  canalType?: number;
+
+  // @Column('int', { name: 'tipo_desconexao', nullable: true })
+  // disconnectionType?: number | null;
+
+  @Column('varchar', { name: 'seqnum', nullable: true, length: 100 })
+  seqnum?: string | null;
+
+  @Column('varchar', { name: 'idCampanha', nullable: true, length: 100 })
+  idCampanha?: string | null;
+
+  @Column('varchar', { name: 'callId', nullable: true, length: 100 })
+  callId?: string | null;
+
+  @Column('varchar', { name: 'callIdGeradorOlos', nullable: true, length: 20 })
+  callIdGeradorOlos?: string | null;
+
+  @Column('varchar', { name: 'statusChamada', nullable: true, length: 50 })
+  statusChamada?: string | null;
+
+  @Column('varchar', { name: 'subStatusIVR', nullable: true, length: 100 })
+  subStatusIVR?: string | null;
+
+  @Column('varchar', { name: 'idEvento', nullable: true, length: 50 })
+  idEvento?: string | null;
+
+  @Column('varchar', { name: 'idServidor', nullable: true, length: 50 })
+  idServidor?: string | null;
+
+  @Column('varchar', { name: 'dna_resultConfidence', nullable: true, length: 50 })
+  dna_resultConfidence?: string | null;
+}
