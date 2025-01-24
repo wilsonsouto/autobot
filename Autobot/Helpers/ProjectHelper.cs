@@ -18,21 +18,24 @@ namespace Autobot.Helpers
 			return [formattedName, pascalCaseProjectName, camelCaseProjectName];
 		}
 
-		public static void CreateAndWriteToFile(string pathFolder, string filePrefix, string content, ProjectModel project)
+		public static void CreateAndWriteToFile(string subFolderPath, string fileNamePrefix, string fileContent, ProjectModel project)
 		{
-			var fileName = project.PascalCaseProjectName + filePrefix + ".ts";
-			var filePath = Path.Combine(Configuration.ConsumerPath + pathFolder, fileName);
+			var fileName = project.PascalCaseProjectName + fileNamePrefix + ".ts";
+			var filePath = Path.Combine(Configuration.ConsumerPath + subFolderPath, fileName);
 
 			try
 			{
+				if (!string.IsNullOrEmpty(Configuration.ConsumerPath + subFolderPath))
+					Directory.CreateDirectory(Configuration.ConsumerPath + subFolderPath);
+
 				using (FileStream fs = File.Create(Path.Combine(filePath)))
 				{
-					Console.WriteLine($"Arquivo '{fileName}' foi criado em '{pathFolder}'");
+					Console.WriteLine($"Arquivo '{fileName}' foi criado em '{subFolderPath}'");
 				}
 
 				using (StreamWriter writer = new StreamWriter(Path.Combine(filePath)))
 				{
-					writer.Write(content);
+					writer.Write(fileContent);
 				}
 
 			}
@@ -41,5 +44,6 @@ namespace Autobot.Helpers
 				Console.WriteLine($"Um erro ocorreu durante a execução: {ex.Message}");
 			}
 		}
+
 	}
 }
