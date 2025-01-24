@@ -10,13 +10,13 @@
   const TBOTNEGOCIADOR_DB_PASSWORD = getEnv('TBOTNEGOCIADOR_DB_PASSWORD', '');
   const {{databaseConnectionName}}_DB_DATABASE = getEnv('{{databaseConnectionName}}_DB_DATABASE', '');
 
-  const entitiesPath = path.join(__dirname, '../models/entities/{{camelCaseProject}}/*{.ts,.js}');
-  const entitiesDirPath = path.join(__dirname, '../models/entities/{{camelCaseProject}}');
-  const seedsPath = path.join(__dirname, '../database/seeds/{{camelCaseProject}}/*{.ts,.js}');
-  const seedsDirPath = path.join(__dirname, '../database/seeds/{{camelCaseProject}}');
+  const entitiesPath = path.join(__dirname, '../models/entities/{{camelCaseProjectName}}/*{.ts,.js}');
+  const entitiesDirPath = path.join(__dirname, '../models/entities/{{camelCaseProjectName}}');
+  const seedsPath = path.join(__dirname, '../database/seeds/{{camelCaseProjectName}}/*{.ts,.js}');
+  const seedsDirPath = path.join(__dirname, '../database/seeds/{{camelCaseProjectName}}');
 
   const connectionOptions: ConnectionOptions = {
-    name: '{{camelCaseProject}}CdrConnection',
+    name: '{{camelCaseProjectName}}CdrConnection',
     type: TBOTNEGOCIADOR_DB_TYPE,
     host: TBOTNEGOCIADOR_DB_HOST,
     port: parseInt(TBOTNEGOCIADOR_DB_PORT),

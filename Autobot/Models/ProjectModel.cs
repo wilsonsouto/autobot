@@ -1,32 +1,36 @@
 using Autobot.Enums;
+using Autobot.Helpers;
 
 namespace Autobot.Models
 {
-	public class ProjectModel(string clientName, ProjectType projectType, ProjectCategory projectCategory, string rogueProjectName)
+	public class ProjectModel
 	{
-		public string ClientName { get; set; } = clientName;
+		public string ClientName { get; set; }
 
-		public ProjectType ProjectType { get; set; } = projectType;
+		public ProjectType ProjectType { get; set; }
 
-		public ProjectCategory ProjectCategory { get; set; } = projectCategory;
+		public ProjectCategory ProjectCategory { get; set; }
 
-		public string RogueProjectName { get; set; } = rogueProjectName;
+		public string RogueProjectName { get; set; }
 
-		public (string, string) GetProjectNameVariations()
+		public string PascalCaseProjectName { get; set; } = string.Empty;
+
+		public string CamelCaseProjectName { get; set; } = string.Empty;
+
+		public ProjectModel(string clientName, ProjectType projectType, ProjectCategory projectCategory, string rogueProjectName)
 		{
-			if (string.IsNullOrEmpty(ClientName))
-				return (string.Empty, string.Empty);
+			ClientName = clientName;
+			ProjectType = projectType;
+			ProjectCategory = projectCategory;
+			RogueProjectName = rogueProjectName;
+			InitializeProjectNameVariations();
+		}
 
-			var words = ClientName.Split([' '], StringSplitOptions.RemoveEmptyEntries);
-
-			var pascalCase = string.Concat(words.Select(word => char.ToUpper(word[0]) + word[1..].ToLower()));
-
-			var camelCase = char.ToLower(pascalCase[0]) + pascalCase[1..];
-
-			var pascalCaseProject = $"{pascalCase}{ProjectType}{ProjectCategory}";
-			var camelCaseProject = $"{camelCase}{ProjectType}{ProjectCategory}";
-
-			return (pascalCaseProject, camelCaseProject);
+		private void InitializeProjectNameVariations()
+		{
+			var variants = ProjectHelper.GetProjectNameVariations(this);
+			PascalCaseProjectName = variants[0];
+			CamelCaseProjectName = variants[1];
 		}
 	}
 }
