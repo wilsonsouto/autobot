@@ -44,6 +44,7 @@
     eventoTableName: getEnv('TBOTNEGOCIADOR_EVENTO_TABLENAME', ''),
     tabulacaoTableName: getEnv('TBOT_TABULACAO_TABLENAME', ''),
     nocApiStatus: getEnv('TBOTNEGOCIADOR_NOC_API_STATUS_TABLENAME', ''),
+    surveyTableName: getEnv('TBOTNEGOCIADOR_PSAT_SURVEY_TABLENAME', ''),
     olosStatus: getEnv('TBOTNEGOCIADOR_OLOS_STATUS_TABLENAME', ''),
     logEnabled: getEnv('TBOTNEGOCIADOR_LOGGING_ENABLED', true),
     enabled: getEnv('TBOTNEGOCIADOR_ENABLED', false) === 'true',
