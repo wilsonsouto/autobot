@@ -38,7 +38,7 @@ This tool has become an essential part of our development workflow, ensuring con
 :heavy_check_mark: **Prompt for Rogue Project Name**: The user is prompted to enter the rogue project's name, with input validation to ensure a valid name is entered;\
 :heavy_check_mark: **Prompt for Project Type**: The user is prompted to select the type of the bot from a list of options;\
 :heavy_check_mark: **Prompt for Project Category**: Based on the selected project type, the user is prompted to select the project category from a list of options;\
-:heavy_check_mark: **Prompt for Project Classification**: If the selected project category is not `Psat`, the user is prompted to select the project classification from a list of options;\
+:heavy_check_mark: **Prompt for Project Classification**: If the selected project category is not `Psat`, the user is prompted to select the project classification from a list of options;
 
 ## :rocket: Technologies
 
