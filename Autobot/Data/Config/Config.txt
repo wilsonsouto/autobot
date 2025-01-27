@@ -1,54 +1,53 @@
+import path from 'path';
+import { ConnectionOptions } from 'typeorm';
+import getEnv from 'utils/Env';
 
-  import path from 'path';
-  import { ConnectionOptions } from 'typeorm';
-  import getEnv from 'utils/Env';
+const TBOTNEGOCIADOR_DB_TYPE = getEnv('TBOTNEGOCIADOR_DB_TYPE', '');
+const TBOTNEGOCIADOR_DB_HOST = getEnv('TBOTNEGOCIADOR_DB_HOST', '');
+const TBOTNEGOCIADOR_DB_PORT = getEnv('TBOTNEGOCIADOR_DB_PORT', '');
+const TBOTNEGOCIADOR_DB_USERNAME = getEnv('TBOTNEGOCIADOR_DB_USERNAME', '');
+const TBOTNEGOCIADOR_DB_PASSWORD = getEnv('TBOTNEGOCIADOR_DB_PASSWORD', '');
+const {{databaseConnectionName}}_DB_DATABASE = getEnv('{{databaseConnectionName}}_DB_DATABASE', '');
 
-  const TBOTNEGOCIADOR_DB_TYPE = getEnv('TBOTNEGOCIADOR_DB_TYPE', '');
-  const TBOTNEGOCIADOR_DB_HOST = getEnv('TBOTNEGOCIADOR_DB_HOST', '');
-  const TBOTNEGOCIADOR_DB_PORT = getEnv('TBOTNEGOCIADOR_DB_PORT', '');
-  const TBOTNEGOCIADOR_DB_USERNAME = getEnv('TBOTNEGOCIADOR_DB_USERNAME', '');
-  const TBOTNEGOCIADOR_DB_PASSWORD = getEnv('TBOTNEGOCIADOR_DB_PASSWORD', '');
-  const {{databaseConnectionName}}_DB_DATABASE = getEnv('{{databaseConnectionName}}_DB_DATABASE', '');
+const entitiesPath = path.join(__dirname, '../models/entities/{{camelCaseProjectName}}/*{.ts,.js}');
+const entitiesDirPath = path.join(__dirname, '../models/entities/{{camelCaseProjectName}}');
+const seedsPath = path.join(__dirname, '../database/seeds/{{camelCaseProjectName}}/*{.ts,.js}');
+const seedsDirPath = path.join(__dirname, '../database/seeds/{{camelCaseProjectName}}');
 
-  const entitiesPath = path.join(__dirname, '../models/entities/{{camelCaseProjectName}}/*{.ts,.js}');
-  const entitiesDirPath = path.join(__dirname, '../models/entities/{{camelCaseProjectName}}');
-  const seedsPath = path.join(__dirname, '../database/seeds/{{camelCaseProjectName}}/*{.ts,.js}');
-  const seedsDirPath = path.join(__dirname, '../database/seeds/{{camelCaseProjectName}}');
+const connectionOptions: ConnectionOptions = {
+  name: '{{camelCaseProjectName}}CdrConnection',
+  type: TBOTNEGOCIADOR_DB_TYPE,
+  host: TBOTNEGOCIADOR_DB_HOST,
+  port: parseInt(TBOTNEGOCIADOR_DB_PORT),
+  username: TBOTNEGOCIADOR_DB_USERNAME,
+  password: TBOTNEGOCIADOR_DB_PASSWORD,
+  database: {{databaseConnectionName}}_DB_DATABASE,
+  synchronize: false,
+  extra: {
+    validateConnection: false,
+    trustServerCertificate: true,
+  },
+  entities: [ entitiesPath ],
+  migrations: [seedsPath],
+  cli: {
+    entitiesDir: entitiesDirPath,
+    migrationsDir: seedsDirPath,
+  },
+};
 
-  const connectionOptions: ConnectionOptions = {
-    name: '{{camelCaseProjectName}}CdrConnection',
-    type: TBOTNEGOCIADOR_DB_TYPE,
-    host: TBOTNEGOCIADOR_DB_HOST,
-    port: parseInt(TBOTNEGOCIADOR_DB_PORT),
-    username: TBOTNEGOCIADOR_DB_USERNAME,
-    password: TBOTNEGOCIADOR_DB_PASSWORD,
-    database: {{databaseConnectionName}}_DB_DATABASE,
-    synchronize: false,
-    extra: {
-      validateConnection: false,
-      trustServerCertificate: true,
-    },
-    entities: [ entitiesPath ],
-    migrations: [seedsPath],
-    cli: {
-      entitiesDir: entitiesDirPath,
-      migrationsDir: seedsDirPath,
-    },
-  };
+// export default {
+const config = {
+  orm: connectionOptions,
+  // TODO Add readme
+  atendimentoTableName: getEnv('TBOTNEGOCIADOR_ATENDIMENTO_TABLENAME', ''),
+  eventoTableName: getEnv('TBOTNEGOCIADOR_EVENTO_TABLENAME', ''),
+  tabulacaoTableName: getEnv('TBOT_TABULACAO_TABLENAME', ''),
+  nocApiStatus: getEnv('TBOTNEGOCIADOR_NOC_API_STATUS_TABLENAME', ''),
+  surveyTableName: getEnv('TBOTNEGOCIADOR_PSAT_SURVEY_TABLENAME', ''),
+  olosStatus: getEnv('TBOTNEGOCIADOR_OLOS_STATUS_TABLENAME', ''),
+  logEnabled: getEnv('TBOTNEGOCIADOR_LOGGING_ENABLED', true),
+  enabled: getEnv('TBOTNEGOCIADOR_ENABLED', false) === 'true',
+  schemaName: getEnv('TBOTNEGOCIADOR_DB_SCHEMA', 'db_rogue'),
+};
 
-  // export default {
-  const config = {
-    orm: connectionOptions,
-    // TODO Add readme
-    atendimentoTableName: getEnv('TBOTNEGOCIADOR_ATENDIMENTO_TABLENAME', ''),
-    eventoTableName: getEnv('TBOTNEGOCIADOR_EVENTO_TABLENAME', ''),
-    tabulacaoTableName: getEnv('TBOT_TABULACAO_TABLENAME', ''),
-    nocApiStatus: getEnv('TBOTNEGOCIADOR_NOC_API_STATUS_TABLENAME', ''),
-    surveyTableName: getEnv('TBOTNEGOCIADOR_PSAT_SURVEY_TABLENAME', ''),
-    olosStatus: getEnv('TBOTNEGOCIADOR_OLOS_STATUS_TABLENAME', ''),
-    logEnabled: getEnv('TBOTNEGOCIADOR_LOGGING_ENABLED', true),
-    enabled: getEnv('TBOTNEGOCIADOR_ENABLED', false) === 'true',
-    schemaName: getEnv('TBOTNEGOCIADOR_DB_SCHEMA', 'db_rogue'),
-  };
-
-  export default config;
+export default config;

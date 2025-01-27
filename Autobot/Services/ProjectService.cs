@@ -167,7 +167,22 @@ namespace Autobot.Services
 			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
 		}
 
-		public void GenerateStrategyFile(ProjectModel project) =>
-			throw new NotImplementedException();
+		public void GenerateStrategyFile(ProjectModel project)
+		{
+			var folderName = "strategies";
+			var filePrefix = "Strategy";
+
+			var templateFilePath = Path.Combine(
+				Configuration.DataPath,
+				$"Strategy/{project.ProjectType}/{project.ProjectCategory}.txt"
+			);
+			var fileContent = File.ReadAllText(templateFilePath)
+				.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName)
+				.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName)
+				.Replace("{{rogueProjectName}}", project.RogueProjectName);
+			;
+
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
+		}
 	}
 }

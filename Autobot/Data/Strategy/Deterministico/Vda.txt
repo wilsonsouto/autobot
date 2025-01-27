@@ -1,0 +1,57 @@
+import { AxiosError } from 'axios';
+import {{pascalCaseProjectName}}Connection from 'database/connections/{{pascalCaseProjectName}}Connection';
+import { {{pascalCaseProjectName}}Factory } from 'factories/{{pascalCaseProjectName}}Factory';
+import { IConsumerStrategy } from 'models/interfaces/IConsumerStrategy';
+import { IConversationTracing } from 'models/interfaces/IConversationTracing';
+import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
+import {{pascalCaseProjectName}}Service from 'services/{{pascalCaseProjectName}}Service';
+import Logger from 'utils/Logger';
+
+export default class {{pascalCaseProjectName}}Strategy implements IConsumerStrategy {
+  public name = '{{rogueProjectName}}';
+
+  public shouldExecute(projectName: string) {
+    return projectName === this.name;
+  }
+
+  public async beforeAll(): Promise<any> {
+    try {
+      const res = await {{pascalCaseProjectName}}Connection.connect();
+
+      console.log('res: ', res);
+    } catch (e) {
+      Logger.error(`[Strategy][${this.name}] - Exception while in setup process. Error: ${JSON.stringify(e)}`);
+    }
+  }
+
+  public async consume(tracing: IConversationTracing): Promise<void> {
+    await {{pascalCaseProjectName}}Service.consumeTracing(tracing);
+  }
+
+  public async afterConsume(tracing: IConversationTracing) {
+    try {
+      const {{camelCaseProjectName}}Factory = new {{pascalCaseProjectName}}Factory();
+
+      // Aspect (comment the lines below if you are not using this API)
+      const nocApiPayload = await {{camelCaseProjectName}}Factory.resolveNocApiFromTracing(tracing);
+      const aspectDisposition = nocApiPayload.StatusChamada ? nocApiPayload.StatusChamada : '';
+      const aspectCall = await {{camelCaseProjectName}}Factory.resolveAspectFromTracing(tracing);
+      await {{pascalCaseProjectName}}Service.sendAspectApiStatus(tracing, aspectCall, aspectDisposition);
+
+      // Olos (comment the lines below if you are not using this API)
+      const olosPayload = await {{camelCaseProjectName}}Factory.resolveOlosApiFromTracing(tracing);
+      await {{pascalCaseProjectName}}Service.sendOlosApiStatus(tracing, olosPayload as IOlosApiPayload);
+
+    } catch (ex) {
+      if ((<AxiosError>ex).isAxiosError) {
+        const axiosError = ex as AxiosError;
+        const errorMessage = `[${tracing.conversationId}] Error requesting ${axiosError.config.url}: ${JSON.stringify(axiosError.message)}`;
+        Logger.info(errorMessage);
+        return;
+      }
+
+      Logger.error(`[${tracing.conversationId}] Error requesting: ${(<Error>ex).message}`);
+      throw ex;
+    }
+  }
+}

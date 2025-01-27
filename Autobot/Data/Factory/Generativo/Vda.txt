@@ -21,7 +21,6 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     Logger.info(`[${this.name}] building event...`);
     const atendimento: {{pascalCaseProjectName}}Atendimento & CDRGenbotBaseEntity = super.makeAtendimentoEvent(tracing);
     const mailing = this.getMailingFromTracing(tracing);
-    const { lastMarking } = this.extractMarking(tracing);
 
     atendimento.documento = mailing.cpf_cnpj;
     atendimento.origem = mailing.origem;
@@ -46,7 +45,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     atendimento.solution = this.resolveSolutionType(tracing);
     atendimento.recordFilename = tracing.getEventsByCategory(RogueCategory.Dialog).pop()?.recordFilename || '';
 
-    this.resolveNocaiStatus(lastMarking).then(status => {
+    this.resolveNocaiStatus(tracing).then(status => {
       atendimento.statusChamada = status.StatusChamada;
       atendimento.subStatusIVR = status.SubStatusIVR;
       atendimento.idEvento = status.IdEvento;
@@ -56,7 +55,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     return atendimento;
   }
 
-  private async resolveNocaiStatus(lastMarking: string): Promise<{
+  public async resolveNocaiStatus(tracing: IConversationTracing): Promise<{
     StatusChamada: string;
     SubStatusIVR: string;
     CodFinalizacao: string;
@@ -70,6 +69,9 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     };
 
     const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+    const { markingList, lastMarking } = this.extractMarking(tracing);
+    Logger.info(`[${tracing.conversationId}] markingList: ${markingList}`);
+    Logger.info(`[${tracing.conversationId}] lastMarking: ${lastMarking}`);
 
     return nocStatusRepository
       .findOne({
@@ -109,7 +111,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
       apiPayload.destCampaignId = parseInt(String(this.resolveVdnFromTracing(tracing))) || 0;
       apiPayload.callbackPhoneNumber = identificationProps.telefone;
       switch (identificationProps.periodoContato?.toLowerCase()) {
-       case 'manha':
+        case 'manha':
           {
             apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
           }
@@ -136,21 +138,18 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
       apiPayload.callbackPhoneNumber = '';
     }
 
-    const { markingList, lastMarking } = this.extractMarking(tracing);
-    Logger.info(`[${tracing.conversationId}] marking list: ${markingList}`);
-    Logger.info(`[${tracing.conversationId}] last marking founded: ${lastMarking}`);
-
+    const { lastMarking } = this.extractMarking(tracing);
     apiPayload.dispositionId = await this.resolveOlosStatus(lastMarking);
     Logger.info(`[${tracing.conversationId}] dispositionIdOlos: ${apiPayload.dispositionId}`);
 
     return apiPayload;
   }
 
-  private async resolveOlosStatus(lastSpt: string): Promise<string> {
+  private async resolveOlosStatus(lastMarking: string): Promise<string> {
     const olosStatusRepository = {{pascalCaseProjectName}}OlosStatusRepository.getRepository();
 
     let olosStatus = await olosStatusRepository.findOne({
-      spt: lastSpt as string,
+      spt: lastMarking as string,
     });
 
     return String(olosStatus?.dispositionId) as string;

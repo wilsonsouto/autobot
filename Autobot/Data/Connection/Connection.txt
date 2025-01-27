@@ -1,4 +1,3 @@
-
 import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
 import BaseDatabaseConnection from './BaseDatabaseConnection';
 

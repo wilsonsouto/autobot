@@ -17,7 +17,6 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     Logger.info(`[${this.name}] building event...`);
     const atendimento: {{pascalCaseProjectName}}Atendimento & CDRGenbotBaseEntity = super.makeAtendimentoEvent(tracing);
     const mailing = this.getMailingFromTracing(tracing);
-    const { lastMarking } = this.extractMarking(tracing);
 
     atendimento.documento = mailing.cpf_cnpj;
     atendimento.origem = mailing.origem;
@@ -41,7 +40,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     atendimento.solution = this.resolveSolutionType(tracing);
     atendimento.recordFilename = tracing.getEventsByCategory(RogueCategory.Dialog).pop()?.recordFilename || '';
 
-    this.resolveNocaiStatus(lastMarking).then(status => {
+    this.resolveNocaiStatus(tracing).then(status => {
       atendimento.statusChamada = status.StatusChamada;
       atendimento.subStatusIVR = status.SubStatusIVR;
       atendimento.idEvento = status.IdEvento;
@@ -51,7 +50,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     return atendimento;
   }
 
-  private async resolveNocaiStatus(lastMarking: string): Promise<{
+  private async resolveNocaiStatus(tracing: IConversationTracing): Promise<{
     StatusChamada: string;
     SubStatusIVR: string;
     CodFinalizacao: string;
@@ -65,6 +64,9 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     };
 
     const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+    const { markingList, lastMarking } = this.extractMarking(tracing);
+    Logger.info(`[${tracing.conversationId}] markingList: ${markingList}`);
+    Logger.info(`[${tracing.conversationId}] lastMarking: ${lastMarking}`);
 
     return nocStatusRepository
       .findOne({

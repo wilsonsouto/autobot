@@ -1,5 +1,5 @@
 import AspectApi from 'config/AspectApiConfig';
-import { OlosApiP3 } from 'config/OlosApiConfig';
+import { OlosApiP2 } from 'config/OlosApiConfig';
 import { {{pascalCaseProjectName}}Factory } from 'factories/{{pascalCaseProjectName}}Factory';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
@@ -46,7 +46,7 @@ class {{pascalCaseProjectName}}Service {
     const endpoint = olosTracing.asrResult ? `/WayWebServer/WayDisposeWithoutHangup/${payload.callId}` : `/WayWebServer/WayDispose/${payload.callId}`;
 
     if (OLOS_API_OCCURRENCE_ENABLED && payload.callId) {
-      const result = await OlosApiP3.post(endpoint, payload);
+      const result = await OlosApiP2.post(endpoint, payload);
       Logger.info(`[${tracing.conversationId}] Received result from olos api: ${JSON.stringify(result.data)}`);
       return result.data;
     }
