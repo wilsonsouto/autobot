@@ -4,13 +4,13 @@
 
 <p align="center">
 
-<img alt="GitHub Top Language Badge" src="https://img.shields.io/github/languages/top/wilsonsouto/auto-bot?&color=56BEB8"/>
+<img alt="GitHub Top Language Badge" src="https://img.shields.io/github/languages/top/wilsonsouto/autobot?&color=56BEB8"/>
 
-<img alt="GitHub Language Count Badge" src="https://img.shields.io/github/languages/count/wilsonsouto/auto-bot?&color=56BEB8"/>
+<img alt="GitHub Language Count Badge" src="https://img.shields.io/github/languages/count/wilsonsouto/autobot?&color=56BEB8"/>
 
-<img alt="GitHub Repository Size Badge" src="https://img.shields.io/github/repo-size/wilsonsouto/auto-bot?&color=56BEB8"/>
+<img alt="GitHub Repository Size Badge" src="https://img.shields.io/github/repo-size/wilsonsouto/autobot?&color=56BEB8"/>
 
-<img alt="Github License Badge" src="https://img.shields.io/github/license/wilsonsouto/auto-bot?color=56BEB8">
+<img alt="Github License Badge" src="https://img.shields.io/github/license/wilsonsouto/autobot?color=56BEB8">
 
 </p>
 
@@ -56,10 +56,10 @@ Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) an
 
 ```bash
 # Clone this project
-$ git clone https://github.com/wilsonsouto/auto-bot
+$ git clone https://github.com/wilsonsouto/autobot
 
 # Access
-$ cd auto-bot/Autobot
+$ cd autobot/Autobot
 
 # Run the project
 $ dotnet run
