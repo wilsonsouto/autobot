@@ -117,8 +117,38 @@ namespace Autobot.Services
 			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, true);
 		}
 
-		public void GenerateRepositoryFile(ProjectModel project) =>
-			throw new NotImplementedException();
+		public void GenerateRepositoryFile(ProjectModel project)
+		{
+			var entitiesDictionary = new Dictionary<int, string>
+			{
+				{ 1, "AtendimentoRepository" },
+				{ 2, "EventoRepository" },
+				{ 3, "NocApiStatusRepository" },
+				{ 4, "OlosStatusRepository" },
+				{ 5, "SurveyRepository" },
+				{ 6, "TabulacaoRepository" },
+			};
+
+			if (project.ProjectCategory != ProjectCategory.Psat)
+				entitiesDictionary.Remove(5);
+
+			foreach (KeyValuePair<int, string> entity in entitiesDictionary)
+			{
+				var folderName = $"repositories/{project.CamelCaseProjectName}";
+				var filePrefix = entity.Value;
+
+				var templateFilePath = Path.Combine(
+					Configuration.DataPath,
+					$"Repositories/{entity.Value}.txt"
+				);
+				var fileContent = File.ReadAllText(templateFilePath)
+					.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName)
+					.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
+				;
+
+				ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
+			}
+		}
 
 		public void GenerateServiceFile(ProjectModel project) =>
 			throw new NotImplementedException();

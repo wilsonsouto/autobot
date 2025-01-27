@@ -13,5 +13,6 @@ internal class Program
 		service.GenerateEntitiesFile(project);
 		service.GenerateFactoryFile(project);
 		service.GenerateInterfaceFile(project);
+		service.GenerateRepositoryFile(project);
 	}
 }

@@ -1,0 +1,12 @@
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+import CDRBaseRepository from 'repositories/cdr/CDRBaseRepository';
+
+class {{pascalCaseProjectName}}AtendimentoRepository extends CDRBaseRepository<{{pascalCaseProjectName}}Atendimento> {}
+
+export default new {{pascalCaseProjectName}}AtendimentoRepository(
+  {{pascalCaseProjectName}}Atendimento.name,
+  {{pascalCaseProjectName}}Config.orm.name!,
+  {{pascalCaseProjectName}}Config.enabled,
+  {{pascalCaseProjectName}}Config.logEnabled,
+);

@@ -1,0 +1,12 @@
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import { {{pascalCaseProjectName}}Tabulacao } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Tabulacao';
+import CDRBaseRepository from 'repositories/cdr/CDRBaseRepository';
+
+class {{pascalCaseProjectName}}TabulacaoRepository extends CDRBaseRepository<{{pascalCaseProjectName}}Tabulacao> {}
+
+export default new {{pascalCaseProjectName}}TabulacaoRepository(
+  {{pascalCaseProjectName}}Tabulacao.name,
+  {{pascalCaseProjectName}}Config.orm.name!,
+  {{pascalCaseProjectName}}Config.enabled,
+  {{pascalCaseProjectName}}Config.logEnabled,
+);

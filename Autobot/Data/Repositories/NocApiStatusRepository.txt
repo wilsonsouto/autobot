@@ -1,0 +1,12 @@
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import { {{pascalCaseProjectName}}NocApiStatus } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}NocApiStatus';
+import CDRBaseRepository from 'repositories/cdr/CDRBaseRepository';
+
+class {{pascalCaseProjectName}}NocApiStatusRepository extends CDRBaseRepository<{{pascalCaseProjectName}}NocApiStatus> {}
+
+export default new {{pascalCaseProjectName}}NocApiStatusRepository(
+  {{pascalCaseProjectName}}NocApiStatus.name,
+  {{pascalCaseProjectName}}Config.orm.name!,
+  {{pascalCaseProjectName}}Config.enabled,
+  {{pascalCaseProjectName}}Config.logEnabled,
+);

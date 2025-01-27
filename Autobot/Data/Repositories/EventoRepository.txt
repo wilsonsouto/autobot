@@ -1,0 +1,12 @@
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import { {{pascalCaseProjectName}}Evento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Evento';
+import CDRBaseRepository from 'repositories/cdr/CDRBaseRepository';
+
+class {{pascalCaseProjectName}}EventoRepository extends CDRBaseRepository<{{pascalCaseProjectName}}Evento> {}
+
+export default new {{pascalCaseProjectName}}EventoRepository(
+  {{pascalCaseProjectName}}Evento.name,
+  {{pascalCaseProjectName}}Config.orm.name!,
+  {{pascalCaseProjectName}}Config.enabled,
+  {{pascalCaseProjectName}}Config.logEnabled,
+);

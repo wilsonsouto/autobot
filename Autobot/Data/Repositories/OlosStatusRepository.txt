@@ -1,0 +1,12 @@
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+import { {{pascalCaseProjectName}}OlosStatus } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}OlosStatus';
+import CDRBaseRepository from 'repositories/cdr/CDRBaseRepository';
+
+class {{pascalCaseProjectName}}OlosStatusRepository extends CDRBaseRepository<{{pascalCaseProjectName}}OlosStatus> {}
+
+export default new {{pascalCaseProjectName}}OlosStatusRepository(
+  {{pascalCaseProjectName}}OlosStatus.name,
+  {{pascalCaseProjectName}}Config.orm.name!,
+  {{pascalCaseProjectName}}Config.enabled,
+  {{pascalCaseProjectName}}Config.logEnabled,
+);
