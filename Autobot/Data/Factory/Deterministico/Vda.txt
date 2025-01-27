@@ -1,0 +1,238 @@
+import CDRLogDataFactory from 'factories/CDRLogDataFactory';
+import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
+import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+import { IConversationTracing } from 'models/interfaces/IConversationTracing';
+import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
+import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
+import { INocApiOccurrence } from 'models/interfaces/tbotNegPadrao/InocApi';
+import { PhoneType } from 'models/types/PhoneType';
+import RogueCategory from 'models/types/RogueCategory';
+import { SolutionType } from 'models/types/SolutionType';
+import CDRDisconnectType from 'models/types/cdr/CDRDisconnectType';
+import {{pascalCaseProjectName}}NocApiStatusRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}NocApiStatusRepository';
+import {{pascalCaseProjectName}}OlosStatusRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}OlosStatusRepository';
+import { addDays } from 'utils/DateUtils';
+import Logger from 'utils/Logger';
+import { isCellPhone } from 'utils/PhoneUtils';
+
+export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
+  private name = '{{pascalCaseProjectName}}Factory';
+
+  public async makeAtendimento(tracing: IConversationTracing): Promise<CDRBaseEntity | {{pascalCaseProjectName}}Atendimento> {
+    Logger.info(`[${this.name}] building event...`);
+    const atendimento: {{pascalCaseProjectName}}Atendimento & CDRBaseEntity = super.makeAtendimentoEvent(tracing);
+    const mailing = this.getMailingFromTracing(tracing);
+    const status = await this.resolveNocApiFromTracing(tracing);
+
+    atendimento.documento = mailing.cpf;
+    atendimento.origem = mailing.origem;
+    atendimento.callId = mailing.identifChamadaOlos;
+    atendimento.seqnum = mailing.seqnum;
+    atendimento.idCampanha = mailing.idCampanha;
+    
+    atendimento.mailing = JSON.stringify(mailing);
+
+    atendimento.telefone = String(mailing.ddd + mailing.telefone);
+    atendimento.phoneType = this.resolvePhoneType(mailing.telefone);
+
+    if (!atendimento.vdn) {
+      atendimento.vdn = this.resolveVdnFromTracing(tracing);
+    }
+    atendimento.clientCode = mailing.id || '';
+
+    atendimento.recordFilename = tracing.getEventsByCategory(RogueCategory.Dialog).pop()?.recordFilename || '';
+    atendimento.solution = this.resolveSolutionType(tracing);
+    atendimento.dna_resultConfidence = this.getConfidencesEvents(tracing);
+
+    atendimento.statusChamada = status.StatusChamada;
+    atendimento.subStatusIVR = status.SubStatusIVR;
+    atendimento.idEvento = status.IdEvento;
+    atendimento.idServidor = tracing.getEventsByCategory(RogueCategory.Conversation).pop()?.hostname || '';
+
+    return atendimento;
+  }
+
+  public async resolveNocApiFromTracing(tracing: IConversationTracing): Promise<INocApiOccurrence> {
+    const apiOccurrencePayload = {} as INocApiOccurrence;
+
+    const { sptList } = this.parseScriptPointsFromTracing(tracing);
+    const sptRanked = await this.rankSptForTabulation(sptList);
+    Logger.info(`[${tracing.conversationId}] sptRanked: ${sptRanked.toString()}`);
+    Logger.info(`[${tracing.conversationId}] lastSptRanked: ${sptRanked[sptRanked.length - 1]}`);
+
+    const status = await this.resolveNocaiStatus(sptRanked[sptRanked.length - 1] || 0);
+    apiOccurrencePayload.StatusChamada = status.StatusChamada;
+    apiOccurrencePayload.SubStatusIVR = status.SubStatusIVR;
+    apiOccurrencePayload.IdEvento = status.IdEvento;
+
+    return apiOccurrencePayload;
+  }
+
+  private async resolveNocaiStatus(lastSpt: number): Promise<{
+    StatusChamada: string;
+    SubStatusIVR: string;
+    IdEvento: string;
+  }> {
+    const status = {
+      StatusChamada: '',
+      SubStatusIVR: '',
+      IdEvento: '',
+    };
+
+    let statusId = 0;
+
+    if (statusId === 0) {
+      statusId = lastSpt;
+    }
+
+    const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+
+    let nocaiStatus = await nocStatusRepository.findOne({
+      status_id: statusId as number,
+    });
+
+    if (!nocaiStatus) {
+      nocaiStatus = await nocStatusRepository.findOne({
+        status_id: 0 as number,
+      });
+    }
+
+    status.StatusChamada = nocaiStatus?.statusChamada as string;
+    status.SubStatusIVR = nocaiStatus?.subStatusIVR as string;
+    status.IdEvento = nocaiStatus?.idEvento as string;
+
+    return status;
+  }
+
+  public async resolveOlosApiFromTracing(tracing: IConversationTracing): Promise<Partial<IOlosApiPayload>> {
+    const apiPayload = {} as IOlosApiPayload;
+    const identificationProps = tracing.identification as IMailing;
+    const atendimento = this.makeAtendimentoEvent(tracing),
+      events = this.makeEvents(tracing);
+
+    apiPayload.callId = identificationProps.identifChamadaOlos;
+    apiPayload.campaignId = identificationProps.idCampanha;
+    apiPayload.dispositionCode = '';
+    apiPayload.asrResult = atendimento.tipoDesconexao == CDRDisconnectType.AthSuccess || atendimento.tipoDesconexao == CDRDisconnectType.AthError;
+
+    if (apiPayload.asrResult) {
+      apiPayload.destCampaignId = parseInt(String(this.resolveVdnFromTracing(tracing))) || 0;
+      apiPayload.callbackPhoneNumber = identificationProps.telefoneContato;
+      switch (identificationProps.periodoContato?.toLowerCase()) {
+        case 'manha':
+          {
+            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
+          }
+          break;
+        case 'tarde':
+          {
+            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 15:00:00');
+          }
+          break;
+        case 'noite':
+          {
+            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 18:00:00');
+          }
+          break;
+        default:
+          {
+            apiPayload.callbackDate = '';
+          }
+          break;
+      }
+    } else {
+      apiPayload.callbackDate = '';
+      apiPayload.destCampaignId = 0;
+      apiPayload.callbackPhoneNumber = '';
+    }
+
+    const { sptList } = this.parseScriptPointsFromTracing(tracing);
+    Logger.info(`[${tracing.conversationId}] lastSptListOlos: ${sptList.toString()}`);
+    const sptRanked = await this.rankSptForTabulation(sptList);
+    Logger.info(`[${tracing.conversationId}] lastSptRankedListOlos: ${sptRanked.toString()}`);
+
+    apiPayload.dispositionId = await this.resolveOlosStatus(tracing.conversationId, sptRanked || 0);
+
+    Logger.info(`[${tracing.conversationId}] dispositionIdOlos: ${apiPayload.dispositionId}`);
+    return apiPayload;
+  }
+
+  private async resolveOlosStatus(conversationId: string, sptList: number[]): Promise<string> {
+    let olosStatus = null;
+
+    const olosStatusRepository = await {{pascalCaseProjectName}}OlosStatusRepository.getRepository();
+    if (sptList?.length > 1) {
+      sptList.reverse();
+      Logger.info(`[${conversationId}] lastSptListOlosReverse: ${sptList.toString()}`);
+      for (let index = 0; index < sptList?.length; index++) {
+        olosStatus = await olosStatusRepository.findOne({
+          spt: sptList[index] as number,
+        });
+        Logger.info(`[${conversationId}] currentSpt: ${sptList[index]}`);
+        Logger.info(`[${conversationId}] dispositionIdFinded: ${olosStatus?.dispositionId}`);
+        if (olosStatus?.dispositionId) {
+          Logger.info(`[${conversationId}] stop with spt: ${sptList[index]}`);
+          break;
+        }
+        Logger.info(`[${conversationId}] continue`);
+      }
+    }
+
+    if (!olosStatus) {
+      olosStatus = await olosStatusRepository.findOne({
+        spt: 0 as number,
+      });
+    }
+
+    return String(olosStatus?.dispositionId) as string;
+  }
+
+  public async resolveAspectFromTracing(tracing: IConversationTracing): Promise<any> {
+    const identificationProps = tracing.identification as IMailing;
+    return identificationProps.seqnum + identificationProps.callId;
+  }
+
+  public async rankSptForTabulation(sptList: number[]): Promise<number[]> {
+    let result: number[] = [];
+    let sptRank = new Map();
+    let dictRank = new Map();
+    dictRank.set('AVNOUVIR', 1);
+    dictRank.set('AVCPC', 2);
+    dictRank.set('AVTRANSFERE', 3);
+    dictRank.set('AVPROMESSA', 4);
+    dictRank.set('AVALEGA', 5);
+    dictRank.set('AVACORDO', 6);
+    const tabulacaoRepository = await {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+    for (let index = 0; index < sptList?.length; index++) {
+      let rankSpt = await tabulacaoRepository.findOne({
+        status_id: sptList[index] as number,
+      });
+      sptRank.set(sptList[index], dictRank.get(rankSpt?.statusChamada.toUpperCase() || '') || 0);
+    }
+    const sortSptRank = new Map([...sptRank].sort((a, b) => a[1] - b[1]));
+    for (let [key, value] of sortSptRank) {
+      result.push(key);
+    }
+    return result;
+  }
+
+  public getMailingFromTracing(tracing: IConversationTracing) {
+    return tracing.identification as IMailing;
+  }
+
+  private resolvePhoneType(phone: string): PhoneType {
+    return isCellPhone(phone) ? PhoneType.celular : PhoneType.fixo;
+  }
+
+  private resolveSolutionType(tracing: IConversationTracing): SolutionType {
+    const solutionMap: { [key: string]: SolutionType } = {
+      voice: SolutionType.vda,
+      chat: SolutionType.whatsapp ?? SolutionType.WebChat,
+    };
+    return solutionMap[tracing.channel];
+  }
+
+  resolveVdnFromTracing(tracing: IConversationTracing): string | undefined {
+    return tracing.getEventsByCategory(RogueCategory.Transfer).pop()?.transferTo;
+  }
+}

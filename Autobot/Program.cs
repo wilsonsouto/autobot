@@ -11,5 +11,6 @@ internal class Program
 		service.ConfigurationFile(project);
 		service.ConnectionFile(project);
 		service.EntitiesFile(project);
+		service.FactoryFile(project);
 	}
 }

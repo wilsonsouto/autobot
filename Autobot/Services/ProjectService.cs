@@ -1,3 +1,4 @@
+using Autobot.Enums;
 using Autobot.Helpers;
 using Autobot.Models;
 
@@ -26,61 +27,81 @@ namespace Autobot.Services
 	{
 		public void ConfigurationFile(ProjectModel project)
 		{
-			var subFolderPath = "config";
+			var folderName = "config";
 			var filePrefix = "Config";
-			var databaseConnectionName =
-			$"{project.DatabaseConnectionName}_{project.ProjectType}_{project.ProjectCategory}".ToUpper();
 
-			var templatePath = Configuration.DataPath + "/Config.txt";
-			var fileContent = File.ReadAllText(templatePath);
+			var connectionName =
+				$"{project.DatabaseConnectionName}_{project.ProjectType}_{project.ProjectCategory}".ToUpper();
 
-			fileContent = fileContent
-						   .Replace("{{databaseConnectionName}}", databaseConnectionName)
-						   .Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
+			var templateFilePath = Path.Combine(Configuration.DataPath, "Config/Config.txt");
+			var fileContent = File.ReadAllText(templateFilePath)
+				.Replace("{{databaseConnectionName}}", connectionName)
+				.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
 
-
-			ProjectHelper.CreateAndWriteToFile(subFolderPath, filePrefix, fileContent, project);
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
 		}
 
 		public void ConnectionFile(ProjectModel project)
 		{
-			var subFolderPath = "database/connections";
+			var folderName = "database/connections";
 			var filePrefix = "Connection";
-			var templatePath = Configuration.DataPath + "/Connection.txt";
-			var fileContent = File.ReadAllText(templatePath);
 
-			fileContent = fileContent.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
+			var templateFilePath = Path.Combine(
+				Configuration.DataPath,
+				"Connection/Connection.txt"
+			);
+			var fileContent = File.ReadAllText(templateFilePath)
+				.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
 
-			ProjectHelper.CreateAndWriteToFile(subFolderPath, filePrefix, fileContent, project);
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
 		}
 
 		public void EntitiesFile(ProjectModel project)
 		{
-			List<string> EntitiesList =
-			[
-				"Atendimento",
-				"Evento",
-				"NocApiStatus",
-				"OlosStatus",
-				"Tabulacao",
-			];
-
-			var projectTypeFolder = project.ProjectType == Enums.ProjectType.Deterministico ?
-			"Deterministico" : "Generativo";
-
-			foreach (var entitie in EntitiesList)
+			var entitiesDictionary = new Dictionary<int, string>
 			{
-				var subFolderPath = $"models/entities/{project.CamelCaseProjectName}";
-				var templatePath = Configuration.DataPath + $"/Entities/{projectTypeFolder}/{entitie}.txt";
-				var fileContent = File.ReadAllText(templatePath);
+				{ 1, "Atendimento" },
+				{ 2, "Evento" },
+				{ 3, "NocApiStatus" },
+				{ 4, "OlosStatus" },
+				{ 5, "Survey" },
+				{ 6, "Tabulacao" },
+			};
 
-				fileContent = fileContent.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
+			if (project.ProjectCategory != ProjectCategory.Psat)
+				entitiesDictionary.Remove(5);
 
-				ProjectHelper.CreateAndWriteToFile(subFolderPath, entitie, fileContent, project);
+			foreach (KeyValuePair<int, string> entity in entitiesDictionary)
+			{
+				var folderName = $"models/entities/{project.CamelCaseProjectName}";
+				var filePrefix = entity.Value;
+
+				var templateFilePath = Path.Combine(
+					Configuration.DataPath,
+					$"Entities/{project.ProjectType}/{entity.Value}.txt"
+				);
+				var fileContent = File.ReadAllText(templateFilePath)
+					.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
+
+				ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
 			}
 		}
 
-		public void FactoryFile(ProjectModel project) => throw new NotImplementedException();
+		public void FactoryFile(ProjectModel project)
+		{
+			var folderName = "factories";
+			var filePrefix = "Factory";
+
+			var templateFilePath = Path.Combine(
+				Configuration.DataPath,
+				$"Factory/{project.ProjectType}/{project.ProjectCategory}.txt"
+			);
+			var fileContent = File.ReadAllText(templateFilePath)
+				.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName)
+				.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
+
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
+		}
 
 		public void InterfaceFile(ProjectModel project) => throw new NotImplementedException();
 
@@ -90,5 +111,4 @@ namespace Autobot.Services
 
 		public void StrategyFile(ProjectModel project) => throw new NotImplementedException();
 	}
-
 }

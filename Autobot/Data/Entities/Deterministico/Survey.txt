@@ -1,0 +1,20 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
+
+@Entity({{pascalCaseProjectName}}Config.surveyTableName, { schema: {{pascalCaseProjectName}}Config.schemaName })
+export class {{pascalCaseProjectName}}CDRSurvey {
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
+  id!: string;
+
+  @Column('char', { name: 'conversation_id', nullable: true, length: 36 })
+  conversationId!: string | null;
+
+  @Column('text', { name: 'question', nullable: true })
+  question!: string;
+
+  @Column('text', { name: 'answer', nullable: true })
+  answer!: string;
+
+  @Column('datetime', { name: 'survey_date', nullable: true })
+  surveyDate!: Date;
+}

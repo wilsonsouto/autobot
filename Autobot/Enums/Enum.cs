@@ -9,18 +9,10 @@ namespace Autobot.Enums
 
 	public enum ProjectCategory
 	{
-		Aquisicao,
-
-		Negociador,
-
-		Localizador,
+		Vda,
 
 		Psat,
 
-		Preventivo,
-
-		Ura,
-
-		Whatsapp,
+		Wpp,
 	}
 }

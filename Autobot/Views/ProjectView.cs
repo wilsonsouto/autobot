@@ -13,7 +13,7 @@ namespace Autobot.Views
 				while (true)
 				{
 					Console.Clear();
-					
+
 					Console.Write("Nome do cliente: ");
 					var clientName = Console.ReadLine();
 
@@ -29,27 +29,18 @@ namespace Autobot.Views
 							.AddChoices(ProjectType.Deterministico, ProjectType.Generativo)
 					);
 
-					var projectCategory = projectType == ProjectType.Deterministico
-						? AnsiConsole.Prompt(
-							new SelectionPrompt<ProjectCategory>()
-								.Title("Selecione a categoria do bot: ")
-								.AddChoices(
-									ProjectCategory.Aquisicao,
-									ProjectCategory.Localizador,
-									ProjectCategory.Negociador,
-									ProjectCategory.Preventivo,
-									ProjectCategory.Ura,
-									ProjectCategory.Psat
-								)
-						)
-						: AnsiConsole.Prompt(
-							new SelectionPrompt<ProjectCategory>()
-								.Title("Selecione a categoria do bot: ")
-								.AddChoices(
-									ProjectCategory.Negociador,
-									ProjectCategory.Whatsapp
-								)
-						);
+					var projectCategory =
+						projectType == ProjectType.Deterministico
+							? AnsiConsole.Prompt(
+								new SelectionPrompt<ProjectCategory>()
+									.Title("Selecione a categoria do bot: ")
+									.AddChoices(ProjectCategory.Vda, ProjectCategory.Psat)
+							)
+							: AnsiConsole.Prompt(
+								new SelectionPrompt<ProjectCategory>()
+									.Title("Selecione a categoria do bot: ")
+									.AddChoices(ProjectCategory.Vda, ProjectCategory.Wpp)
+							);
 
 					Console.Write("Nome do projeto Rogue: ");
 					var rogueProjectName = Console.ReadLine();
@@ -60,7 +51,12 @@ namespace Autobot.Views
 						rogueProjectName = Console.ReadLine();
 					}
 
-					return new ProjectModel(clientName!, projectType, projectCategory, rogueProjectName!);
+					return new ProjectModel(
+						clientName!,
+						projectType,
+						projectCategory,
+						rogueProjectName!
+					);
 				}
 			}
 		}

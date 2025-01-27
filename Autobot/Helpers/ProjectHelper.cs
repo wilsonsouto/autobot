@@ -44,6 +44,5 @@ namespace Autobot.Helpers
 				Console.WriteLine($"Um erro ocorreu durante a execução: {ex.Message}");
 			}
 		}
-
 	}
 }

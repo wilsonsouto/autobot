@@ -108,8 +108,14 @@ export class {{pascalCaseProjectName}}Atendimento extends CDRBaseEntity {
   @Column('varchar', { name: 'callId', nullable: true, length: 100 })
   callId?: string | null;
 
-  @Column('varchar', { name: 'callIdGeradorOlos', nullable: true, length: 20 })
-  callIdGeradorOlos?: string | null;
+  @Column('varchar', { name: 'nome', nullable: true, length: 100 })
+  nome?: string | null;
+
+  @Column('varchar', { name: 'cliente', nullable: true, length: 100 })
+  cliente?: string | null;
+
+  @Column('varchar', { name: 'ramal', nullable: true, length: 100 })
+  ramal?: string | null;
 
   @Column('varchar', { name: 'statusChamada', nullable: true, length: 50 })
   statusChamada?: string | null;

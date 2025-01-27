@@ -1,0 +1,99 @@
+import CDRLogDataFactory from './CDRLogDataFactory';
+import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
+import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+import { IConversationTracing } from 'models/interfaces/IConversationTracing';
+import Logger from 'utils/Logger';
+import RogueCategory from 'models/types/RogueCategory';
+import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
+import { isCellPhone } from 'utils/PhoneUtils';
+import { PhoneType } from 'models/types/PhoneType';
+import { SolutionType } from 'models/types/SolutionType';
+import { {{pascalCaseProjectName}}CDRSurvey } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}CDRSurvey';
+
+export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
+  private name = '{{pascalCaseProjectName}}Factory';
+
+  public makeAtendimento(tracing: IConversationTracing): CDRBaseEntity | {{pascalCaseProjectName}}Atendimento {
+    Logger.info(`[${this.name}] building event...`);
+    const atendimento: {{pascalCaseProjectName}}Atendimento = super.makeAtendimentoEvent(tracing);
+    const mailing = this.getMailingFromTracing(tracing);
+
+    atendimento.documento = mailing.cpf_cnpj;
+    atendimento.origem = mailing.origem;
+    atendimento.callId = mailing.callId;
+    atendimento.seqnum = mailing.seqnum;
+    atendimento.idCampanha = mailing.idCampanha;
+    atendimento.nome = mailing.nome;
+    atendimento.cliente = mailing.cliente;
+    atendimento.ramal = mailing.ramal;
+
+    atendimento.mailing = JSON.stringify(mailing);
+
+    atendimento.telefone = String(mailing.ddd + mailing.telefone);
+    atendimento.phoneType = this.resolvePhoneType(mailing.telefone);
+
+    atendimento.clientCode = mailing.id || '';
+    atendimento.phoneType = this.resolvePhoneType(mailing?.telefone);
+
+    if (!atendimento.vdn) {
+      atendimento.vdn = this.resolveVdnFromTracing(tracing);
+    }
+
+    atendimento.dna_resultConfidence = this.getConfidencesEvents(tracing);
+    atendimento.solution = this.resolveSolutionType(tracing);
+    atendimento.recordFilename = tracing.getEventsByCategory(RogueCategory.Dialog).pop()?.recordFilename || '';
+
+    return atendimento;
+  }
+
+  public makeSurveys(tracing: IConversationTracing): Array<{{pascalCaseProjectName}}CDRSurvey> {
+    const events = tracing.getEventsByCategory(RogueCategory.Identification);
+    const mailing = this.getMailingFromTracing(tracing);
+    const atendimento = this.makeAtendimentoEvent(tracing);
+
+    const surveys = [] as {{pascalCaseProjectName}}CDRSurvey[];
+    for (let i = 0; i < events.length; i++) {
+      const ev = events[i];
+
+      if (Object.keys(ev.identification).some(key => key.startsWith('NotaSatisfacao'))) {
+        const surveyObj = ev.extractObjectWithPrefix('NotaSatisfacao') as any;
+        surveyObj.conversationId = tracing.conversationId;
+        surveyObj.question = mailing.Question;
+        surveyObj.answer = mailing.NotaSatisfacao !== '' ? mailing.NotaSatisfacao : surveyObj.answer;
+        surveyObj.surveyDate = atendimento.dtini;
+        surveys[0] = surveyObj;
+      }
+
+      if (Object.keys(ev.identification).some(key => key.startsWith('NotaResolucao'))) {
+        const surveyObj = ev.extractObjectWithPrefix('NotaResolucao') as any;
+        surveyObj.conversationId = tracing.conversationId;
+        surveyObj.question = mailing.Question1;
+        surveyObj.answer = mailing.NotaResolucao !== '' ? mailing.NotaResolucao : surveyObj.answer;
+        surveyObj.surveyDate = atendimento.dtini;
+        surveys[1] = surveyObj;
+      }
+    }
+
+    return surveys as {{pascalCaseProjectName}}CDRSurvey[];
+  }
+
+  public getMailingFromTracing(tracing: IConversationTracing) {
+    return tracing.identification as IMailing;
+  }
+
+  private resolvePhoneType(phone: string): PhoneType {
+    return isCellPhone(phone) ? PhoneType.celular : PhoneType.fixo;
+  }
+
+  private resolveSolutionType(tracing: IConversationTracing): SolutionType {
+    const solutionMap: { [key: string]: SolutionType } = {
+      voice: SolutionType.vda,
+      chat: SolutionType.whatsapp ?? SolutionType.WebChat,
+    };
+    return solutionMap[tracing.channel];
+  }
+
+  resolveVdnFromTracing(tracing: IConversationTracing): string | undefined {
+    return tracing.getEventsByCategory(RogueCategory.Transfer).pop()?.transferTo;
+  }
+}
