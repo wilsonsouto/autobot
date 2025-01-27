@@ -23,6 +23,15 @@ namespace Autobot.Views
 						clientName = Console.ReadLine();
 					}
 
+					Console.Write("Nome do projeto Rogue: ");
+					var rogueProjectName = Console.ReadLine();
+
+					while (!ValidationHelper.IsStringValid(rogueProjectName))
+					{
+						Console.Write("Insira o nome do projeto Rogue válido: ");
+						rogueProjectName = Console.ReadLine();
+					}
+
 					var projectType = AnsiConsole.Prompt(
 						new SelectionPrompt<ProjectType>()
 							.Title("Selecione o tipo do bot: ")
@@ -42,20 +51,33 @@ namespace Autobot.Views
 									.AddChoices(ProjectCategory.Vda, ProjectCategory.Wpp)
 							);
 
-					Console.Write("Nome do projeto Rogue: ");
-					var rogueProjectName = Console.ReadLine();
-
-					while (!ValidationHelper.IsStringValid(rogueProjectName))
+					if (projectCategory != ProjectCategory.Psat)
 					{
-						Console.Write("Insira o nome do projeto Rogue válido: ");
-						rogueProjectName = Console.ReadLine();
+						var projectClassification = AnsiConsole.Prompt(
+							new SelectionPrompt<ProjectClassification>()
+								.Title("Selecione a classificação do bot: ")
+								.AddChoices(
+									ProjectClassification.Aquisicao,
+									ProjectClassification.Localizador,
+									ProjectClassification.Negociador,
+									ProjectClassification.Preventivo
+								)
+						);
+
+						return new ProjectModel(
+							clientName!,
+							rogueProjectName!,
+							projectType,
+							projectCategory,
+							projectClassification
+						);
 					}
 
 					return new ProjectModel(
 						clientName!,
+						rogueProjectName!,
 						projectType,
-						projectCategory,
-						rogueProjectName!
+						projectCategory
 					);
 				}
 			}

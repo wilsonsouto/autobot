@@ -1,4 +1,5 @@
 using Autobot.Models;
+using Autobot.Enums;
 
 namespace Autobot.Helpers
 {
@@ -21,6 +22,14 @@ namespace Autobot.Helpers
 				$"{formattedName}{project.ProjectType}{project.ProjectCategory}";
 			var camelCaseProjectName =
 				$"{camelCaseName}{project.ProjectType}{project.ProjectCategory}";
+
+			if (project.ProjectCategory != ProjectCategory.Psat)
+			{
+				pascalCaseProjectName =
+					$"{formattedName}{project.ProjectType}{project.ProjectClassification}{project.ProjectCategory}";
+				camelCaseProjectName =
+					$"{camelCaseName}{project.ProjectType}{project.ProjectClassification}{project.ProjectCategory}";
+			}
 
 			return [formattedName, pascalCaseProjectName, camelCaseProjectName];
 		}

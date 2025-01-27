@@ -15,4 +15,15 @@ namespace Autobot.Enums
 
 		Wpp,
 	}
+
+	public enum ProjectClassification
+	{
+		Aquisicao,
+
+		Localizador,
+
+		Negociador,
+
+		Preventivo,
+	}
 }

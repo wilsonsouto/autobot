@@ -22,5 +22,4 @@ namespace Autobot
 			throw new Exception($"O diretório {dir} não foi encontrado");
 		}
 	}
-
 }
