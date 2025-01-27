@@ -10,4 +10,8 @@ export interface IMailing {
   ddd: string;
   telefone: string;
   id: string;
+  question1: string,
+  notaSatisfacao: string,
+  question2: string,
+  notaResolucao: string,
 }

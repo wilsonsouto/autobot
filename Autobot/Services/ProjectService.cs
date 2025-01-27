@@ -150,8 +150,22 @@ namespace Autobot.Services
 			}
 		}
 
-		public void GenerateServiceFile(ProjectModel project) =>
-			throw new NotImplementedException();
+		public void GenerateServiceFile(ProjectModel project)
+		{
+			var folderName = "services";
+			var filePrefix = "Service";
+
+			var templateFilePath = Path.Combine(
+				Configuration.DataPath,
+				$"Services/{project.ProjectCategory}.txt"
+			);
+			var fileContent = File.ReadAllText(templateFilePath)
+				.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName)
+				.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
+			;
+
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
+		}
 
 		public void GenerateStrategyFile(ProjectModel project) =>
 			throw new NotImplementedException();

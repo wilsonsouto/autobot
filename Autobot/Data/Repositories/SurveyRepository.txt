@@ -1,11 +1,11 @@
 import {{pascalCaseProjectName}}Config from 'config/{{pascalCaseProjectName}}Config';
-import { {{pascalCaseProjectName}}CDRSurvey } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}CDRSurvey';
+import { {{pascalCaseProjectName}}Survey } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Survey';
 import CDRBaseRepository from 'repositories/cdr/CDRBaseRepository';
 
-class IntervalorPSatVdaRepository extends CDRBaseRepository<{{pascalCaseProjectName}}CDRSurvey> {}
+class IntervalorPSatVdaRepository extends CDRBaseRepository<{{pascalCaseProjectName}}Survey> {}
 
 export default new IntervalorPSatVdaRepository(
-  {{pascalCaseProjectName}}CDRSurvey.name,
+  {{pascalCaseProjectName}}Survey.name,
   {{pascalCaseProjectName}}Config.orm.name!,
   {{pascalCaseProjectName}}Config.enabled,
   {{pascalCaseProjectName}}Config.logEnabled,

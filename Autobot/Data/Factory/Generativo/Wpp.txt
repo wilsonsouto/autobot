@@ -1,16 +1,14 @@
-
 import CDRLogGenbotDataFactory from 'factories/CDRLogGenbotDataFactory';
-import { CDRGenbotBaseEntity } from 'models/entities/cdrBaseEntity/CDRGenbotBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+import { CDRGenbotBaseEntity } from 'models/entities/cdrBaseEntity/CDRGenbotBaseEntity';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
-import Logger from 'utils/Logger';
-import RogueCategory from 'models/types/RogueCategory';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
-import { isCellPhone } from 'utils/PhoneUtils';
 import { PhoneType } from 'models/types/PhoneType';
+import RogueCategory from 'models/types/RogueCategory';
 import { SolutionType } from 'models/types/SolutionType';
-import CDRDisconnectType from 'models/types/cdr/CDRDisconnectType';
 import {{pascalCaseProjectName}}NocApiStatusRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}NocApiStatusRepository';
+import Logger from 'utils/Logger';
+import { isCellPhone } from 'utils/PhoneUtils';
 
 export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
   private name = '{{pascalCaseProjectName}}Factory';
@@ -54,26 +52,28 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
   }
 
   private async resolveNocaiStatus(lastMarking: string): Promise<{
-    StatusChamada: string,
-    SubStatusIVR: string,
-    CodFinalizacao: string,
-    IdEvento: string,
-}> {
+    StatusChamada: string;
+    SubStatusIVR: string;
+    CodFinalizacao: string;
+    IdEvento: string;
+  }> {
     const status = {
-        StatusChamada: '',
-        SubStatusIVR: '',
-        CodFinalizacao: '',
-        IdEvento: '',
+      StatusChamada: '',
+      SubStatusIVR: '',
+      CodFinalizacao: '',
+      IdEvento: '',
     };
 
-    let nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+    const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
 
-    return nocStatusRepository.findOne({
-        status_id: lastMarking as string
-    }).then((nocaiStatus: { statusChamada: string; subStatusIVR: string; codFinalizacao: string; idEvento: string; }) => {
+    return nocStatusRepository
+      .findOne({
+        status_id: lastMarking as string,
+      })
+      .then(nocaiStatus => {
         if (!nocaiStatus) {
-            Logger.error("Status not found for status_id: ", lastMarking);
-            return status;
+          Logger.error('Status not found for status_id: ', lastMarking);
+          return status;
         }
 
         status.StatusChamada = nocaiStatus.statusChamada as string;
@@ -82,11 +82,12 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
         status.IdEvento = nocaiStatus.idEvento as string;
 
         return status;
-    }).catch((err: string) => {
-        Logger.error("Error retrieving Nocai status: ", err);
+      })
+      .catch(err => {
+        Logger.error('Error retrieving Nocai status: ', err);
         return status;
-    });
-}
+      });
+  }
 
   public getMailingFromTracing(tracing: IConversationTracing) {
     return tracing.identification as IMailing;

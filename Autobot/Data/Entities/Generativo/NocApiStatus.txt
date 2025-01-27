@@ -6,8 +6,8 @@ export class {{pascalCaseProjectName}}NocApiStatus {
   @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
   id!: string;
 
-  @Column('int', {  name: "status_id" })
-  status_id!: number;
+  @Column('varchar', {  name: "status_id", length: 50 })
+  status_id!: string;
 
   @Column('varchar', { name: "status_chamada", length: 50 })
   statusChamada!: string;

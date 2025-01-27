@@ -1,0 +1,67 @@
+import AspectApi from 'config/AspectApiConfig';
+import { OlosApiP3 } from 'config/OlosApiConfig';
+import { {{pascalCaseProjectName}}Factory } from 'factories/{{pascalCaseProjectName}}Factory';
+import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+import { IConversationTracing } from 'models/interfaces/IConversationTracing';
+import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
+import {{pascalCaseProjectName}}AtendimentoRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}AtendimentoRepository';
+import {{pascalCaseProjectName}}EventoRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}EventoRepository';
+import getEnv from 'utils/Env';
+import Logger from 'utils/Logger';
+
+const OLOS_API_OCCURRENCE_ENABLED = getEnv('OLOS_API_OCCURRENCE_ENABLED', false);
+const ASPECT_API_OCCURRENCE_ENABLED = getEnv('ASPECT_API_OCCURRENCE_ENABLED', false);
+
+class {{pascalCaseProjectName}}Service {
+  private name = '{{pascalCaseProjectName}}Service';
+  private cdrFactory = new {{pascalCaseProjectName}}Factory();
+
+  public async consumeTracing(tracing: IConversationTracing) {
+    try {
+      const atendimentoEvent = this.cdrFactory.makeAtendimento(tracing);
+      const cdrEvents = this.cdrFactory.makeEvents(tracing);
+
+      Logger.info(`[${this.name}][${tracing.conversationId}] AtendimentoObject `, atendimentoEvent);
+
+      Logger.info(`[${this.name}][${tracing.conversationId}] ${cdrEvents.length} CdrEvents captured`);
+
+      await {{pascalCaseProjectName}}AtendimentoRepository.insert(await atendimentoEvent);
+      await Promise.all(cdrEvents.map(async cdrEvent => {{pascalCaseProjectName}}EventoRepository.insert(cdrEvent)));
+
+      Logger.info(`[${tracing.conversationId}] Sucessfully inserted record into [${{{pascalCaseProjectName}}Atendimento.name}!] `);
+    } catch (exception) {
+      const exceptionError = exception as Error;
+      if (!/Duplicate entry/.test(exceptionError.toString())) {
+        Logger.error(`[${this.name}] (${tracing.conversationId}) - Exception while trying to insert into database:  `, exceptionError);
+        throw exceptionError;
+      }
+      Logger.error(`[${this.name}] (${tracing.conversationId}) - Duplicate entry.`);
+    }
+  }
+
+  public async sendOlosApiStatus(tracing: IConversationTracing, payload: IOlosApiPayload): Promise<string | void> {
+    Logger.info(`[${tracing.conversationId}] Sending notification to olos api: ${JSON.stringify(payload)}`);
+
+    const olosTracing = await this.cdrFactory.resolveOlosApiFromTracing(tracing);
+    const endpoint = olosTracing.asrResult ? `/WayWebServer/WayDisposeWithoutHangup/${payload.callId}` : `/WayWebServer/WayDispose/${payload.callId}`;
+
+    if (OLOS_API_OCCURRENCE_ENABLED && payload.callId) {
+      const result = await OlosApiP3.post(endpoint, payload);
+      Logger.info(`[${tracing.conversationId}] Received result from olos api: ${JSON.stringify(result.data)}`);
+      return result.data;
+    }
+  }
+
+  public async sendAspectApiStatus(tracing: IConversationTracing, call: string, dispositionStatus: string): Promise<string | void> {
+    Logger.info(`[${tracing.conversationId}] Sending notification to aspect api`);
+
+    if (ASPECT_API_OCCURRENCE_ENABLED) {
+      const aspectApi = new AspectApi();
+      const result = await aspectApi.updateAspectCall(call, dispositionStatus);
+      Logger.info(`[${tracing.conversationId}] Received result from aspect api: ${JSON.stringify(result)}`);
+      return result;
+    }
+  }
+}
+
+export default new {{pascalCaseProjectName}}Service();

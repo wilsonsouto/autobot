@@ -1,10 +1,10 @@
 import CDRLogDataFactory from 'factories/CDRLogDataFactory';
-import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
-import { INocApiOccurrence } from 'models/interfaces/tbotNegPadrao/InocApi';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
+import { INocApiOccurrence } from 'models/interfaces/tbotNegPadrao/InocApi';
 import { PhoneType } from 'models/types/PhoneType';
 import RogueCategory from 'models/types/RogueCategory';
 import { SolutionType } from 'models/types/SolutionType';
@@ -190,7 +190,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     return String(olosStatus?.dispositionId) as string;
   }
 
-  public async resolveAspectFromTracing(tracing: IConversationTracing): Promise<any> {
+  public async resolveAspectFromTracing(tracing: IConversationTracing): Promise<string> {
     const identificationProps = tracing.identification as IMailing;
     return identificationProps.seqnum + identificationProps.callId;
   }

@@ -14,5 +14,6 @@ internal class Program
 		service.GenerateFactoryFile(project);
 		service.GenerateInterfaceFile(project);
 		service.GenerateRepositoryFile(project);
+		service.GenerateServiceFile(project);
 	}
 }

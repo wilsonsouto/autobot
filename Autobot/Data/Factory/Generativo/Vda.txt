@@ -1,4 +1,3 @@
-
 import CDRLogGenbotDataFactory from './CDRLogGenbotDataFactory';
 import { CDRGenbotBaseEntity } from 'models/entities/cdrBaseEntity/CDRGenbotBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
@@ -10,7 +9,7 @@ import { isCellPhone } from 'utils/PhoneUtils';
 import { PhoneType } from 'models/types/PhoneType';
 import { SolutionType } from 'models/types/SolutionType';
 import CDRDisconnectType from 'models/types/cdr/CDRDisconnectType';
-import { addDays, addHours } from 'utils/DateUtils';
+import { addDays } from 'utils/DateUtils';
 import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
 import {{pascalCaseProjectName}}OlosStatusRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}OlosStatusRepository';
 import {{pascalCaseProjectName}}NocApiStatusRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}NocApiStatusRepository';
@@ -58,26 +57,28 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
   }
 
   private async resolveNocaiStatus(lastMarking: string): Promise<{
-    StatusChamada: string,
-    SubStatusIVR: string,
-    CodFinalizacao: string,
-    IdEvento: string,
-}> {
+    StatusChamada: string;
+    SubStatusIVR: string;
+    CodFinalizacao: string;
+    IdEvento: string;
+  }> {
     const status = {
-        StatusChamada: '',
-        SubStatusIVR: '',
-        CodFinalizacao: '',
-        IdEvento: '',
+      StatusChamada: '',
+      SubStatusIVR: '',
+      CodFinalizacao: '',
+      IdEvento: '',
     };
 
-    let nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+    const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
 
-    return nocStatusRepository.findOne({
-        status_id: lastMarking as string
-    }).then((nocaiStatus: { statusChamada: string; subStatusIVR: string; codFinalizacao: string; idEvento: string; }) => {
+    return nocStatusRepository
+      .findOne({
+        status_id: lastMarking as string,
+      })
+      .then(nocaiStatus => {
         if (!nocaiStatus) {
-            Logger.error("Status not found for status_id: ", lastMarking);
-            return status;
+          Logger.error('Status not found for status_id: ', lastMarking);
+          return status;
         }
 
         status.StatusChamada = nocaiStatus.statusChamada as string;
@@ -86,11 +87,12 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
         status.IdEvento = nocaiStatus.idEvento as string;
 
         return status;
-    }).catch((err: string) => {
-        Logger.error("Error retrieving Nocai status: ", err);
+      })
+      .catch(err => {
+        Logger.error('Error retrieving Nocai status: ', err);
         return status;
-    });
-}
+      });
+  }
 
   public async resolveOlosApiFromTracing(tracing: IConversationTracing): Promise<Partial<IOlosApiPayload>> {
     const apiPayload = {} as IOlosApiPayload;
@@ -107,18 +109,26 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
       apiPayload.destCampaignId = parseInt(String(this.resolveVdnFromTracing(tracing))) || 0;
       apiPayload.callbackPhoneNumber = identificationProps.telefone;
       switch (identificationProps.periodoContato?.toLowerCase()) {
-        case 'manha': {
-          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
-        } break;
-        case 'tarde': {
-          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 15:00:00');
-        } break;
-        case 'noite': {
-          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 18:00:00');
-        } break;
-        default: {
-          apiPayload.callbackDate = '';
-        } break;
+       case 'manha':
+          {
+            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
+          }
+          break;
+        case 'tarde':
+          {
+            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 15:00:00');
+          }
+          break;
+        case 'noite':
+          {
+            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 18:00:00');
+          }
+          break;
+        default:
+          {
+            apiPayload.callbackDate = '';
+          }
+          break;
       }
     } else {
       apiPayload.callbackDate = '';
@@ -130,20 +140,25 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     Logger.info(`[${tracing.conversationId}] marking list: ${markingList}`);
     Logger.info(`[${tracing.conversationId}] last marking founded: ${lastMarking}`);
 
-    apiPayload.dispositionId = await this.resolveOlosStatus(tracing.conversationId, lastMarking);
+    apiPayload.dispositionId = await this.resolveOlosStatus(lastMarking);
     Logger.info(`[${tracing.conversationId}] dispositionIdOlos: ${apiPayload.dispositionId}`);
 
     return apiPayload;
   }
 
-  private async resolveOlosStatus(conversationId: string, lastSpt: string): Promise<string> {
-    const olosStatusRepository = await {{pascalCaseProjectName}}OlosStatusRepository.getRepository();
+  private async resolveOlosStatus(lastSpt: string): Promise<string> {
+    const olosStatusRepository = {{pascalCaseProjectName}}OlosStatusRepository.getRepository();
 
     let olosStatus = await olosStatusRepository.findOne({
       spt: lastSpt as string,
     });
 
     return String(olosStatus?.dispositionId) as string;
+  }
+
+  public async resolveAspectFromTracing(tracing: IConversationTracing): Promise<string> {
+    const identificationProps = tracing.identification as IMailing;
+    return identificationProps.seqnum + identificationProps.callId;
   }
 
   public getMailingFromTracing(tracing: IConversationTracing) {
@@ -156,8 +171,8 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
 
   private resolveSolutionType(tracing: IConversationTracing): SolutionType {
     const solutionMap: { [key: string]: SolutionType } = {
-      'voice': SolutionType.vda,
-      'chat': SolutionType.whatsapp ?? SolutionType.WebChat,
+      voice: SolutionType.vda,
+      chat: SolutionType.whatsapp ?? SolutionType.WebChat,
     }
     return solutionMap[tracing.channel];
   }

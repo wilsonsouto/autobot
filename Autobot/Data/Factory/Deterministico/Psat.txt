@@ -1,14 +1,14 @@
-import CDRLogDataFactory from './CDRLogDataFactory';
-import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
-import { IConversationTracing } from 'models/interfaces/IConversationTracing';
-import Logger from 'utils/Logger';
-import RogueCategory from 'models/types/RogueCategory';
+import { {{pascalCaseProjectName}}Survey } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Survey';
+import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
-import { isCellPhone } from 'utils/PhoneUtils';
+import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { PhoneType } from 'models/types/PhoneType';
+import RogueCategory from 'models/types/RogueCategory';
 import { SolutionType } from 'models/types/SolutionType';
-import { {{pascalCaseProjectName}}CDRSurvey } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}CDRSurvey';
+import Logger from 'utils/Logger';
+import { isCellPhone } from 'utils/PhoneUtils';
+import CDRLogDataFactory from './CDRLogDataFactory';
 
 export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
   private name = '{{pascalCaseProjectName}}Factory';
@@ -46,20 +46,20 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     return atendimento;
   }
 
-  public makeSurveys(tracing: IConversationTracing): Array<{{pascalCaseProjectName}}CDRSurvey> {
+  public makeSurveys(tracing: IConversationTracing): Array<{{pascalCaseProjectName}}Survey> {
     const events = tracing.getEventsByCategory(RogueCategory.Identification);
     const mailing = this.getMailingFromTracing(tracing);
     const atendimento = this.makeAtendimentoEvent(tracing);
 
-    const surveys = [] as {{pascalCaseProjectName}}CDRSurvey[];
+    const surveys = [] as {{pascalCaseProjectName}}Survey[];
     for (let i = 0; i < events.length; i++) {
       const ev = events[i];
 
       if (Object.keys(ev.identification).some(key => key.startsWith('NotaSatisfacao'))) {
         const surveyObj = ev.extractObjectWithPrefix('NotaSatisfacao') as any;
         surveyObj.conversationId = tracing.conversationId;
-        surveyObj.question = mailing.Question;
-        surveyObj.answer = mailing.NotaSatisfacao !== '' ? mailing.NotaSatisfacao : surveyObj.answer;
+        surveyObj.question = mailing.question1;
+        surveyObj.answer = mailing.notaSatisfacao !== '' ? mailing.notaSatisfacao : surveyObj.answer;
         surveyObj.surveyDate = atendimento.dtini;
         surveys[0] = surveyObj;
       }
@@ -67,14 +67,14 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
       if (Object.keys(ev.identification).some(key => key.startsWith('NotaResolucao'))) {
         const surveyObj = ev.extractObjectWithPrefix('NotaResolucao') as any;
         surveyObj.conversationId = tracing.conversationId;
-        surveyObj.question = mailing.Question1;
-        surveyObj.answer = mailing.NotaResolucao !== '' ? mailing.NotaResolucao : surveyObj.answer;
+        surveyObj.question = mailing.question2;
+        surveyObj.answer = mailing.notaResolucao !== '' ? mailing.notaResolucao : surveyObj.answer;
         surveyObj.surveyDate = atendimento.dtini;
         surveys[1] = surveyObj;
       }
     }
 
-    return surveys as {{pascalCaseProjectName}}CDRSurvey[];
+    return surveys as {{pascalCaseProjectName}}Survey[];
   }
 
   public getMailingFromTracing(tracing: IConversationTracing) {

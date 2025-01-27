@@ -1,6 +1,7 @@
 export interface IMailing {
   cpf_cnpj: string;
   origem: string;
+  callId: string;
   identifChamadaOlos: string;
   seqnum: string;
   idCampanha: string;

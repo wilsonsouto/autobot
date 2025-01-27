@@ -6,8 +6,8 @@ export class {{pascalCaseProjectName}}OlosStatus {
   @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
   id!: string;
 
-  @Column('int', {  name: "spt" })
-  spt!: number;
+  @Column('varchar', { name: 'spt', nullable: true, length: 50 })
+  spt?: string | null;
 
   @Column('varchar', { name: "descricao_olos", length: 50 })
   descricaoOlos!: string;

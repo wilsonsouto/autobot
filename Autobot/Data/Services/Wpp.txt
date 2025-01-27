@@ -1,0 +1,34 @@
+import { {{pascalCaseProjectName}}Factory } from 'factories/{{pascalCaseProjectName}}Factory';
+import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+import { IConversationTracing } from 'models/interfaces/IConversationTracing';
+import {{pascalCaseProjectName}}AtendimentoRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}AtendimentoRepository';
+import {{pascalCaseProjectName}}EventoRepository from 'repositories/{{camelCaseProjectName}}/{{pascalCaseProjectName}}EventoRepository';
+import Logger from 'utils/Logger';
+
+class {{pascalCaseProjectName}}Service {
+  private name = '{{pascalCaseProjectName}}Service';
+  private cdrFactory = new {{pascalCaseProjectName}}Factory();
+
+  public async consumeTracing(tracing: IConversationTracing) {
+    try {
+      const atendimentoEvent = this.cdrFactory.makeAtendimento(tracing);
+      const cdrEvents = this.cdrFactory.makeEvents(tracing);
+
+      Logger.info(`[${this.name}][${tracing.conversationId}] AtendimentoObject `, atendimentoEvent);
+      Logger.info(`[${this.name}][${tracing.conversationId}] ${cdrEvents.length} CdrEvents captured`);
+
+      await {{pascalCaseProjectName}}AtendimentoRepository.insert(atendimentoEvent);
+      await Promise.all(cdrEvents.map(async cdrEvent => {{pascalCaseProjectName}}EventoRepository.insert(cdrEvent)));
+
+      Logger.info(`[${tracing.conversationId}] Sucessfully inserted record into [${{{pascalCaseProjectName}}Atendimento.name}!] `);
+    } catch (exception) {
+      const exceptionError = exception as Error;
+      if (!/Duplicate entry/.test(exceptionError.toString())) {
+        Logger.error(`[${this.name}] (${tracing.conversationId}) - Exception while trying to insert into database:  `, exceptionError);
+        throw exceptionError;
+      }
+      Logger.error(`[${this.name}] (${tracing.conversationId}) - Duplicate entry.`);
+    }
+  }
+}
+export default new {{pascalCaseProjectName}}Service();
