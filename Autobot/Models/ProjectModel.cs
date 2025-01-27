@@ -19,7 +19,12 @@ namespace Autobot.Models
 
 		public string CamelCaseProjectName { get; set; } = string.Empty;
 
-		public ProjectModel(string clientName, ProjectType projectType, ProjectCategory projectCategory, string rogueProjectName)
+		public ProjectModel(
+			string clientName,
+			ProjectType projectType,
+			ProjectCategory projectCategory,
+			string rogueProjectName
+		)
 		{
 			ClientName = clientName;
 			ProjectType = projectType;

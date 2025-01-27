@@ -6,26 +6,26 @@ namespace Autobot.Services
 {
 	public interface IProjectService
 	{
-		void ConfigurationFile(ProjectModel project);
+		void GenerateConfigurationFile(ProjectModel project);
 
-		void ConnectionFile(ProjectModel project);
+		void GenerateConnectionFile(ProjectModel project);
 
-		void EntitiesFile(ProjectModel project);
+		void GenerateEntitiesFile(ProjectModel project);
 
-		void FactoryFile(ProjectModel project);
+		void GenerateFactoryFile(ProjectModel project);
 
-		void InterfaceFile(ProjectModel project);
+		void GenerateInterfaceFile(ProjectModel project);
 
-		void RepositoryFile(ProjectModel project);
+		void GenerateRepositoryFile(ProjectModel project);
 
-		void ServiceFile(ProjectModel project);
+		void GenerateServiceFile(ProjectModel project);
 
-		void StrategyFile(ProjectModel project);
+		void GenerateStrategyFile(ProjectModel project);
 	}
 
 	public class ProjectService : IProjectService
 	{
-		public void ConfigurationFile(ProjectModel project)
+		public void GenerateConfigurationFile(ProjectModel project)
 		{
 			var folderName = "config";
 			var filePrefix = "Config";
@@ -41,7 +41,7 @@ namespace Autobot.Services
 			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
 		}
 
-		public void ConnectionFile(ProjectModel project)
+		public void GenerateConnectionFile(ProjectModel project)
 		{
 			var folderName = "database/connections";
 			var filePrefix = "Connection";
@@ -56,7 +56,7 @@ namespace Autobot.Services
 			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
 		}
 
-		public void EntitiesFile(ProjectModel project)
+		public void GenerateEntitiesFile(ProjectModel project)
 		{
 			var entitiesDictionary = new Dictionary<int, string>
 			{
@@ -87,7 +87,7 @@ namespace Autobot.Services
 			}
 		}
 
-		public void FactoryFile(ProjectModel project)
+		public void GenerateFactoryFile(ProjectModel project)
 		{
 			var folderName = "factories";
 			var filePrefix = "Factory";
@@ -103,12 +103,16 @@ namespace Autobot.Services
 			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
 		}
 
-		public void InterfaceFile(ProjectModel project) => throw new NotImplementedException();
+		public void GenerateInterfaceFile(ProjectModel project) =>
+			throw new NotImplementedException();
 
-		public void RepositoryFile(ProjectModel project) => throw new NotImplementedException();
+		public void GenerateRepositoryFile(ProjectModel project) =>
+			throw new NotImplementedException();
 
-		public void ServiceFile(ProjectModel project) => throw new NotImplementedException();
+		public void GenerateServiceFile(ProjectModel project) =>
+			throw new NotImplementedException();
 
-		public void StrategyFile(ProjectModel project) => throw new NotImplementedException();
+		public void GenerateStrategyFile(ProjectModel project) =>
+			throw new NotImplementedException();
 	}
 }

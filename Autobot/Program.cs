@@ -8,9 +8,9 @@ internal class Program
 		var project = ProjectView.RunMenu();
 
 		ProjectService service = new();
-		service.ConfigurationFile(project);
-		service.ConnectionFile(project);
-		service.EntitiesFile(project);
-		service.FactoryFile(project);
+		service.GenerateConfigurationFile(project);
+		service.GenerateConnectionFile(project);
+		service.GenerateEntitiesFile(project);
+		service.GenerateFactoryFile(project);
 	}
 }

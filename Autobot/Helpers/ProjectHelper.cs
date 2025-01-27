@@ -6,19 +6,31 @@ namespace Autobot.Helpers
 	{
 		public static List<string> GetProjectNameVariations(ProjectModel project)
 		{
-			var clientWords = project.ClientName.Split([' '], StringSplitOptions.RemoveEmptyEntries);
+			var clientWords = project.ClientName.Split(
+				[' '],
+				StringSplitOptions.RemoveEmptyEntries
+			);
 
-			var formattedName = string.Concat(clientWords.Select(word => char.ToUpper(word[0]) + word[1..].ToLower()));
+			var formattedName = string.Concat(
+				clientWords.Select(word => char.ToUpper(word[0]) + word[1..].ToLower())
+			);
 
 			var camelCaseName = char.ToLower(formattedName[0]) + formattedName[1..];
 
-			var pascalCaseProjectName = $"{formattedName}{project.ProjectType}{project.ProjectCategory}";
-			var camelCaseProjectName = $"{camelCaseName}{project.ProjectType}{project.ProjectCategory}";
+			var pascalCaseProjectName =
+				$"{formattedName}{project.ProjectType}{project.ProjectCategory}";
+			var camelCaseProjectName =
+				$"{camelCaseName}{project.ProjectType}{project.ProjectCategory}";
 
 			return [formattedName, pascalCaseProjectName, camelCaseProjectName];
 		}
 
-		public static void CreateAndWriteToFile(string subFolderPath, string fileNamePrefix, string fileContent, ProjectModel project)
+		public static void CreateAndWriteToFile(
+			string subFolderPath,
+			string fileNamePrefix,
+			string fileContent,
+			ProjectModel project
+		)
 		{
 			var fileName = project.PascalCaseProjectName + fileNamePrefix + ".ts";
 			var filePath = Path.Combine(Configuration.ConsumerPath + subFolderPath, fileName);
@@ -37,7 +49,6 @@ namespace Autobot.Helpers
 				{
 					writer.Write(fileContent);
 				}
-
 			}
 			catch (Exception ex)
 			{
