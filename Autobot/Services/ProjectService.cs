@@ -38,7 +38,7 @@ namespace Autobot.Services
 				.Replace("{{databaseConnectionName}}", connectionName)
 				.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
 
-			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
 		}
 
 		public void GenerateConnectionFile(ProjectModel project)
@@ -53,7 +53,7 @@ namespace Autobot.Services
 			var fileContent = File.ReadAllText(templateFilePath)
 				.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
 
-			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
 		}
 
 		public void GenerateEntitiesFile(ProjectModel project)
@@ -83,7 +83,7 @@ namespace Autobot.Services
 				var fileContent = File.ReadAllText(templateFilePath)
 					.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName);
 
-				ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
+				ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
 			}
 		}
 
@@ -100,11 +100,22 @@ namespace Autobot.Services
 				.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName)
 				.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName);
 
-			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project);
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);
 		}
 
-		public void GenerateInterfaceFile(ProjectModel project) =>
-			throw new NotImplementedException();
+		public void GenerateInterfaceFile(ProjectModel project)
+		{
+			var folderName = $"models/interfaces/{project.CamelCaseProjectName}";
+			var filePrefix = "";
+
+			var templateFilePath = Path.Combine(
+				Configuration.DataPath,
+				$"Interfaces/{project.ProjectCategory}.txt"
+			);
+			var fileContent = File.ReadAllText(templateFilePath);
+
+			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, true);
+		}
 
 		public void GenerateRepositoryFile(ProjectModel project) =>
 			throw new NotImplementedException();

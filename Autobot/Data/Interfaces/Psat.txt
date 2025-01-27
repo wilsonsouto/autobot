@@ -1,0 +1,13 @@
+export interface IMailing {
+  cpf_cnpj: string;
+  origem: string;
+  callId: string;
+  seqnum: string;
+  idCampanha: string;
+  nome: string;
+  cliente: string;
+  ramal: string;
+  ddd: string;
+  telefone: string;
+  id: string;
+}

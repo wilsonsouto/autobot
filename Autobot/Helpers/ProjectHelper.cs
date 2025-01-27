@@ -26,23 +26,28 @@ namespace Autobot.Helpers
 		}
 
 		public static void CreateAndWriteToFile(
-			string subFolderPath,
-			string fileNamePrefix,
+			string folderName,
+			string filePrefix,
 			string fileContent,
-			ProjectModel project
+			ProjectModel project,
+			bool isInterface
 		)
 		{
-			var fileName = project.PascalCaseProjectName + fileNamePrefix + ".ts";
-			var filePath = Path.Combine(Configuration.ConsumerPath + subFolderPath, fileName);
+			var fileName = project.PascalCaseProjectName + filePrefix + ".ts";
+
+			if (isInterface)
+				fileName = "IMailing.ts";
+
+			var filePath = Path.Combine(Configuration.ConsumerPath + folderName, fileName);
 
 			try
 			{
-				if (!string.IsNullOrEmpty(Configuration.ConsumerPath + subFolderPath))
-					Directory.CreateDirectory(Configuration.ConsumerPath + subFolderPath);
+				if (!string.IsNullOrEmpty(Configuration.ConsumerPath + folderName))
+					Directory.CreateDirectory(Configuration.ConsumerPath + folderName);
 
 				using (FileStream fs = File.Create(Path.Combine(filePath)))
 				{
-					Console.WriteLine($"Arquivo '{fileName}' foi criado em '{subFolderPath}'");
+					Console.WriteLine($"Arquivo '{fileName}' foi criado em '{folderName}'");
 				}
 
 				using (StreamWriter writer = new StreamWriter(Path.Combine(filePath)))

@@ -12,5 +12,6 @@ internal class Program
 		service.GenerateConnectionFile(project);
 		service.GenerateEntitiesFile(project);
 		service.GenerateFactoryFile(project);
+		service.GenerateInterfaceFile(project);
 	}
 }
