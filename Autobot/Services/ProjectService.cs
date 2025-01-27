@@ -33,6 +33,10 @@ namespace Autobot.Services
 			var connectionName =
 				$"{project.DatabaseConnectionName}_{project.ProjectType}_{project.ProjectCategory}".ToUpper();
 
+			if (project.ProjectCategory != ProjectCategory.Psat)
+				connectionName =
+					$"{project.DatabaseConnectionName}_{project.ProjectType}_{project.ProjectClassification}_{project.ProjectCategory}".ToUpper();
+
 			var templateFilePath = Path.Combine(Configuration.DataPath, "Config/Config.txt");
 			var fileContent = File.ReadAllText(templateFilePath)
 				.Replace("{{databaseConnectionName}}", connectionName)
