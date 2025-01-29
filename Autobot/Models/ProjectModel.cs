@@ -13,7 +13,7 @@ namespace Autobot.Models
 
 		public ProjectCategory ProjectCategory { get; set; }
 
-		public ProjectClassification ProjectClassification { get; set;}
+		public ProjectClassification ProjectClassification { get; set; }
 
 		public string DatabaseConnectionName { get; set; } = string.Empty;
 
@@ -21,7 +21,12 @@ namespace Autobot.Models
 
 		public string CamelCaseProjectName { get; set; } = string.Empty;
 
-		public ProjectModel(string clientName, string rogueProjectName, ProjectType projectType, ProjectCategory projectCategory)
+		public ProjectModel(
+			string clientName,
+			string rogueProjectName,
+			ProjectType projectType,
+			ProjectCategory projectCategory
+		)
 		{
 			ClientName = clientName;
 			RogueProjectName = rogueProjectName;
@@ -30,7 +35,13 @@ namespace Autobot.Models
 			InitializeProjectNameVariations();
 		}
 
-		public ProjectModel(string clientName, string rogueProjectName, ProjectType projectType, ProjectCategory projectCategory, ProjectClassification projectClassification)
+		public ProjectModel(
+			string clientName,
+			string rogueProjectName,
+			ProjectType projectType,
+			ProjectCategory projectCategory,
+			ProjectClassification projectClassification
+		)
 		{
 			ClientName = clientName;
 			RogueProjectName = rogueProjectName;
