@@ -1,6 +1,6 @@
 &#xa0;
 
-<h1 align="center">AutoBot</h1>
+<h1 align="center">Autobot</h1>
 
 <p align="center">
 
@@ -28,9 +28,9 @@
 
 ## :dart: About
 
-AutoBot is a console-based automation script that I developed specifically for my work to streamline the creation and management of project files for various types of bots. Before the implementation of this tool, developing a single bot would take around 1.5 hours. With AutoBot, the same process can now be completed in just 5 minutes, significantly optimizing time and reducing the margin for error.
+This script automates the creation and management of bot project files in my work, saving time and reducing the margin for error. It streamlines the setup process, allowing bot development that would typically take 1.5 hours to be completed in just 5 minutes.
 
-This tool has become an essential part of our development workflow, ensuring consistency across projects and enhancing productivity. It is now widely used by the entire development team, making it a critical asset for accelerating project delivery and maintaining high-quality standards.
+The tool has become essential in our development workflow, ensuring consistency, enhancing productivity, and accelerating project delivery while maintaining high-quality standards.
 
 ## :sparkles: Features
 
