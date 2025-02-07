@@ -71,7 +71,7 @@ $ dotnet run
 
 This project is under license from MIT. For more details, see the [LICENSE](LICENSE) file.
 
-Made with :heart: by <a href="https://github.com/wilsonsouto" target="_blank">wilsonsouto</a>
+Made with :heart: by [wilsonsouto](https://github.com/wilsonsouto)
 
 &#xa0;
 
