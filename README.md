@@ -34,11 +34,11 @@ The tool has become essential in our development workflow, ensuring consistency,
 
 ## :sparkles: Features
 
-:heavy_check_mark: **Prompt for Client Name**: The user is prompted to enter the client's name, with input validation to ensure a valid name is entered;\
-:heavy_check_mark: **Prompt for Rogue Project Name**: The user is prompted to enter the rogue project's name, with input validation to ensure a valid name is entered;\
-:heavy_check_mark: **Prompt for Project Type**: The user is prompted to select the type of the bot from a list of options;\
-:heavy_check_mark: **Prompt for Project Category**: Based on the selected project type, the user is prompted to select the project category from a list of options;\
-:heavy_check_mark: **Prompt for Project Classification**: If the selected project category is not `Psat`, the user is prompted to select the project classification from a list of options;
+:heavy_check_mark: **Prompt for Client Name**: The user is prompted to enter the client's name, with input validation to ensure a valid name is entered.\
+:heavy_check_mark: **Prompt for Rogue Project Name**: The user is prompted to enter the rogue project's name, with input validation to ensure a valid name is entered.\
+:heavy_check_mark: **Prompt for Project Type**: The user is prompted to select the type of the bot from a list of options.\
+:heavy_check_mark: **Prompt for Project Category**: Based on the selected project type, the user is prompted to select the project category from a list of options.\
+:heavy_check_mark: **Prompt for Project Classification**: If the selected project category is not `Psat`, the user is prompted to select the project classification from a list of options.
 
 ## :rocket: Technologies
 
@@ -58,7 +58,7 @@ Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) an
 # Clone this project
 $ git clone https://github.com/wilsonsouto/autobot
 
-# Access
+# Access the project folder
 $ cd autobot/Autobot
 
 # Run the project
