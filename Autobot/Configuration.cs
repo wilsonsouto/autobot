@@ -1,25 +1,25 @@
-namespace Autobot
+namespace Autobot;
+
+public static class Configuration
 {
-	public static class Configuration
+	public static string ConsumerPath => Path.Combine(FindDirectory("rogue-consumer-cob"), "src/");
+
+	public static string DataPath => Path.Combine(FindDirectory("Data"));
+
+	private static string FindDirectory(string dir)
 	{
-		public static string ConsumerPath => Path.Combine(FindDirectory("rogue-consumer-cob"), "src/");
+		var currentDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
 
-		public static string DataPath => Path.Combine(FindDirectory("Data"));
-
-		public static string FindDirectory(string dir)
+		while (currentDirectory.Parent != null)
 		{
-			var currentDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-
-			while (currentDirectory.Parent != null)
+			if (Directory.Exists(Path.Combine(currentDirectory.FullName, dir)))
 			{
-				if (Directory.Exists(Path.Combine(currentDirectory.FullName, dir)))
-				{
-					return Path.Combine(currentDirectory.FullName, dir);
-				}
-				currentDirectory = currentDirectory.Parent;
+				return Path.Combine(currentDirectory.FullName, dir);
 			}
 
-			throw new Exception($"O diretório {dir} não foi encontrado");
+			currentDirectory = currentDirectory.Parent;
 		}
+
+		throw new Exception($"O diretório {dir} não foi encontrado");
 	}
 }

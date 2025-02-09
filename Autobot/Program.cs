@@ -1,9 +1,11 @@
 using Autobot.Services;
 using Autobot.Views;
 
-internal class Program
+namespace Autobot;
+
+public static class Program
 {
-	private static void Main(string[] args)
+	public static void Main(string[] args)
 	{
 		var project = ProjectView.RunMenu();
 
