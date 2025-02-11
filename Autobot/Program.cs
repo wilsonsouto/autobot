@@ -1,22 +1,23 @@
-using Autobot.Services;
+﻿using Autobot.Services;
 using Autobot.Views;
 
-namespace Autobot;
-
-public static class Program
+namespace Autobot
 {
-	public static void Main(string[] args)
+	public static class Program
 	{
-		var project = ProjectView.RunMenu();
+		public static void Main(string[] args)
+		{
+			var project = ProjectView.RunMenu();
 
-		ProjectService service = new();
-		service.GenerateConfigurationFile(project);
-		service.GenerateConnectionFile(project);
-		service.GenerateEntitiesFile(project);
-		service.GenerateFactoryFile(project);
-		service.GenerateInterfaceFile(project);
-		service.GenerateRepositoryFile(project);
-		service.GenerateServiceFile(project);
-		service.GenerateStrategyFile(project);
+			ProjectService service = new();
+			service.GenerateConfigurationFile(project);
+			service.GenerateConnectionFile(project);
+			service.GenerateEntitiesFile(project);
+			service.GenerateFactoryFile(project);
+			service.GenerateInterfaceFile(project);
+			service.GenerateRepositoryFile(project);
+			service.GenerateServiceFile(project);
+			service.GenerateStrategyFile(project);
+		}
 	}
 }
