@@ -14,6 +14,9 @@ namespace Autobot.Views
 				{
 					Console.Clear();
 
+					AnsiConsole.Write(new FigletText("Autobot").Color(Color.Blue));
+					AnsiConsole.MarkupLine("[bold red]Atenção![/] Certifique-se de rodar '[green]git pull[/]' para obter as últimas atualizações antes de continuar.\n");
+
 					Console.Write("Nome do cliente: ");
 					var clientName = Console.ReadLine();
 
