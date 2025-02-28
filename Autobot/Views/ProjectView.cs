@@ -17,22 +17,22 @@ namespace Autobot.Views
 					AnsiConsole.Write(new FigletText("Autobot").Color(Color.Blue));
 					AnsiConsole.MarkupLine("[bold red]Atenção![/] Certifique-se de rodar '[green]git pull[/]' para obter as últimas atualizações antes de continuar.\n");
 
-					Console.Write("Nome do cliente: ");
+					Console.Write("Informe o nome do cliente (ex: Sem Parar, Anima): ");
 					var clientName = Console.ReadLine();
 
 					while (!ValidationHelper.IsStringValid(clientName))
 					{
-						Console.Write("Insira o nome de cliente válido: ");
+						Console.Write("Informe o nome de cliente válido: ");
 						clientName = Console.ReadLine();
 					}
 
-					Console.Write("Nome do projeto Rogue: ");
-					var rogueProjectName = Console.ReadLine();
+					Console.Write("Informe o nome do projeto (valor do campo 'Project' no arquivo 'appsettings.json'): ");
+					var projectName = Console.ReadLine();
 
-					while (!ValidationHelper.IsStringValid(rogueProjectName))
+					while (!ValidationHelper.IsStringValid(projectName))
 					{
-						Console.Write("Insira o nome do projeto Rogue válido: ");
-						rogueProjectName = Console.ReadLine();
+						Console.Write("Informe o nome do projeto válido: ");
+						projectName = Console.ReadLine();
 					}
 
 					var projectType = AnsiConsole.Prompt(
@@ -69,7 +69,7 @@ namespace Autobot.Views
 
 						return new ProjectModel(
 							clientName!,
-							rogueProjectName!,
+							projectName!,
 							projectType,
 							projectCategory,
 							projectClassification
@@ -78,7 +78,7 @@ namespace Autobot.Views
 
 					return new ProjectModel(
 						clientName!,
-						rogueProjectName!,
+						projectName!,
 						projectType,
 						projectCategory
 					);

@@ -1,4 +1,4 @@
-import path from 'path';
+﻿import path from 'path';
 import { ConnectionOptions } from 'typeorm';
 import getEnv from 'utils/Env';
 

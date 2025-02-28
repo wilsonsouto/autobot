@@ -154,7 +154,7 @@ namespace Autobot.Services
 			var fileContent = File.ReadAllText(templateFilePath)
 				.Replace("{{pascalCaseProjectName}}", project.PascalCaseProjectName)
 				.Replace("{{camelCaseProjectName}}", project.CamelCaseProjectName)
-				.Replace("{{rogueProjectName}}", project.RogueProjectName);
+				.Replace("{{projectName}}", project.ProjectName);
 			;
 
 			ProjectHelper.CreateAndWriteToFile(folderName, filePrefix, fileContent, project, false);

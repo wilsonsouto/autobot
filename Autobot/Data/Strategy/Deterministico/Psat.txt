@@ -1,11 +1,11 @@
-import {{pascalCaseProjectName}}Connection from 'database/connections/{{pascalCaseProjectName}}Connection';
+﻿import {{pascalCaseProjectName}}Connection from 'database/connections/{{pascalCaseProjectName}}Connection';
 import { IConsumerStrategy } from 'models/interfaces/IConsumerStrategy';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import {{pascalCaseProjectName}}Service from 'services/{{pascalCaseProjectName}}Service';
 import Logger from 'utils/Logger';
 
 export default class {{pascalCaseProjectName}}Strategy implements IConsumerStrategy {
-  public name = '{{rogueProjectName}}';
+  public name = '{{projectName}}';
 
   public shouldExecute(projectName: string) {
     return projectName === this.name;
