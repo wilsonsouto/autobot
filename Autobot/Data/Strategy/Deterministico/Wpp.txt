@@ -1,0 +1,27 @@
+﻿import {{pascalCaseProjectName}}Connection from 'database/connections/{{pascalCaseProjectName}}Connection';
+import { IConsumerStrategy } from 'models/interfaces/IConsumerStrategy';
+import { IConversationTracing } from 'models/interfaces/IConversationTracing';
+import {{pascalCaseProjectName}}Service from 'services/{{pascalCaseProjectName}}Service';
+import Logger from 'utils/Logger';
+
+export default class {{pascalCaseProjectName}}Strategy implements IConsumerStrategy {
+  public name = '{{projectName}}';
+
+  public shouldExecute(projectName: string) {
+    return projectName === this.name;
+  }
+
+  public async beforeAll(): Promise<any> {
+    try {
+      const res = await {{pascalCaseProjectName}}Connection.connect();
+
+      console.log('res: ', res);
+    } catch (e) {
+      Logger.error(`[Strategy][${this.name}] - Exception while in setup process. Error: ${JSON.stringify(e)}`);
+    }
+  }
+
+  public async consume(tracing: IConversationTracing): Promise<void> {
+    await {{pascalCaseProjectName}}Service.consumeTracing(tracing);
+  }
+}
