@@ -50,7 +50,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     return atendimento;
   }
 
-    public async resolveNocApiFromTracing(tracing: IConversationTracing): Promise<INocApiOccurrence> {
+  public async resolveNocApiFromTracing(tracing: IConversationTracing): Promise<INocApiOccurrence> {
     const apiOccurrencePayload = {} as INocApiOccurrence;
 
     const { sptList } = this.parseScriptPointsFromTracing(tracing);
@@ -66,7 +66,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     return apiOccurrencePayload;
   }
 
-    private async resolveNocaiStatus(lastSpt: number): Promise<{
+  private async resolveNocaiStatus(lastSpt: number): Promise<{
     StatusChamada: string;
     SubStatusIVR: string;
     IdEvento: string;
