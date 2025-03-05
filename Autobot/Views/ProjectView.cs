@@ -46,7 +46,7 @@ namespace Autobot.Views
 							? AnsiConsole.Prompt(
 								new SelectionPrompt<ProjectCategory>()
 									.Title("Selecione a categoria do bot: ")
-									.AddChoices(ProjectCategory.Vda, ProjectCategory.Psat)
+									.AddChoices(ProjectCategory.Vda, ProjectCategory.Psat, ProjectCategory.Wpp)
 							)
 							: AnsiConsole.Prompt(
 								new SelectionPrompt<ProjectCategory>()
