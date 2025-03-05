@@ -1,8 +1,9 @@
-import CDRLogGenbotDataFactory from 'factories/CDRLogGenbotDataFactory';
+﻿import CDRLogDataFactory from 'factories/CDRLogDataFactory';
+import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
-import { CDRGenbotBaseEntity } from 'models/entities/cdrBaseEntity/CDRGenbotBaseEntity';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
+import { INocApiOccurrence } from 'models/interfaces/tbotNegPadrao/InocApi';
 import { PhoneType } from 'models/types/PhoneType';
 import RogueCategory from 'models/types/RogueCategory';
 import { SolutionType } from 'models/types/SolutionType';
@@ -10,13 +11,14 @@ import {{pascalCaseProjectName}}NocApiStatusRepository from 'repositories/{{came
 import Logger from 'utils/Logger';
 import { isCellPhone } from 'utils/PhoneUtils';
 
-export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
+export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
   private name = '{{pascalCaseProjectName}}Factory';
 
-  public makeAtendimento(tracing: IConversationTracing): CDRGenbotBaseEntity | {{pascalCaseProjectName}}Atendimento {
+  public async makeAtendimento(tracing: IConversationTracing): Promise<CDRBaseEntity | {{pascalCaseProjectName}}Atendimento> {
     Logger.info(`[${this.name}] building event...`);
-    const atendimento: {{pascalCaseProjectName}}Atendimento & CDRGenbotBaseEntity = super.makeAtendimentoEvent(tracing);
+    const atendimento: {{pascalCaseProjectName}}Atendimento & CDRBaseEntity = super.makeAtendimentoEvent(tracing);
     const mailing = this.getMailingFromTracing(tracing);
+    const status = await this.resolveNocApiFromTracing(tracing);
 
     atendimento.documento = mailing.cpf_cnpj;
     atendimento.origem = mailing.origem;
@@ -40,55 +42,88 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     atendimento.solution = this.resolveSolutionType(tracing);
     atendimento.recordFilename = tracing.getEventsByCategory(RogueCategory.Dialog).pop()?.recordFilename || '';
 
-    this.resolveNocaiStatus(tracing).then(status => {
-      atendimento.statusChamada = status.StatusChamada;
-      atendimento.subStatusIVR = status.SubStatusIVR;
-      atendimento.idEvento = status.IdEvento;
-      atendimento.idServidor = tracing.getEventsByCategory(RogueCategory.Conversation).pop()?.hostname || '';
-    });
+    atendimento.statusChamada = status.StatusChamada;
+    atendimento.subStatusIVR = status.SubStatusIVR;
+    atendimento.idEvento = status.IdEvento;
+    atendimento.idServidor = tracing.getEventsByCategory(RogueCategory.Conversation).pop()?.hostname || '';
 
     return atendimento;
   }
 
-  private async resolveNocaiStatus(tracing: IConversationTracing): Promise<{
+    public async resolveNocApiFromTracing(tracing: IConversationTracing): Promise<INocApiOccurrence> {
+    const apiOccurrencePayload = {} as INocApiOccurrence;
+
+    const { sptList } = this.parseScriptPointsFromTracing(tracing);
+    const sptRanked = await this.rankSptForTabulation(sptList);
+    Logger.info(`[${tracing.conversationId}] sptRanked: ${sptRanked.toString()}`);
+    Logger.info(`[${tracing.conversationId}] lastSptRanked: ${sptRanked[sptRanked.length - 1]}`);
+
+    const status = await this.resolveNocaiStatus(sptRanked[sptRanked.length - 1] || 0);
+    apiOccurrencePayload.StatusChamada = status.StatusChamada;
+    apiOccurrencePayload.SubStatusIVR = status.SubStatusIVR;
+    apiOccurrencePayload.IdEvento = status.IdEvento;
+
+    return apiOccurrencePayload;
+  }
+
+    private async resolveNocaiStatus(lastSpt: number): Promise<{
     StatusChamada: string;
     SubStatusIVR: string;
-    CodFinalizacao: string;
     IdEvento: string;
   }> {
     const status = {
       StatusChamada: '',
       SubStatusIVR: '',
-      CodFinalizacao: '',
       IdEvento: '',
     };
 
+    let statusId = 0;
+
+    if (statusId === 0) {
+      statusId = lastSpt;
+    }
+
     const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
-    const { markingList, lastMarking } = this.extractMarking(tracing);
-    Logger.info(`[${tracing.conversationId}] markingList: ${markingList}`);
-    Logger.info(`[${tracing.conversationId}] lastMarking: ${lastMarking}`);
 
-    return nocStatusRepository
-      .findOne({
-        status_id: lastMarking as string,
-      })
-      .then(nocaiStatus => {
-        if (!nocaiStatus) {
-          Logger.error('Status not found for status_id: ', lastMarking);
-          return status;
-        }
+    let nocaiStatus = await nocStatusRepository.findOne({
+      status_id: statusId as number,
+    });
 
-        status.StatusChamada = nocaiStatus.statusChamada as string;
-        status.SubStatusIVR = nocaiStatus.subStatusIVR as string;
-        status.CodFinalizacao = nocaiStatus.codFinalizacao as string;
-        status.IdEvento = nocaiStatus.idEvento as string;
-
-        return status;
-      })
-      .catch(err => {
-        Logger.error('Error retrieving Nocai status: ', err);
-        return status;
+    if (!nocaiStatus) {
+      nocaiStatus = await nocStatusRepository.findOne({
+        status_id: 0 as number,
       });
+    }
+
+    status.StatusChamada = nocaiStatus?.statusChamada as string;
+    status.SubStatusIVR = nocaiStatus?.subStatusIVR as string;
+    status.IdEvento = nocaiStatus?.idEvento as string;
+
+    return status;
+  }
+
+  public async rankSptForTabulation(sptList: number[]): Promise<number[]> {
+    let result: number[] = [];
+    let sptRank = new Map();
+    let dictRank = new Map();
+    dictRank.set('AVNOUVIR', 1);
+    dictRank.set('AVCPC', 2);
+    dictRank.set('AVTRANSFERE', 3);
+    dictRank.set('AVPROMESSA', 4);
+    dictRank.set('AVALEGA', 5);
+    dictRank.set('AVACORDO', 6);
+    const tabulacaoRepository = await {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+    for (let index = 0; index < sptList?.length; index++) {
+      let rankSpt = await tabulacaoRepository.findOne({
+        status_id: sptList[index] as number,
+      });
+      sptRank.set(sptList[index], dictRank.get(rankSpt?.statusChamada.toUpperCase() || '') || 0);
+    }
+    const sortSptRank = new Map([...sptRank].sort((a, b) => a[1] - b[1]));
+    for (let [key, value] of sortSptRank) {
+      result.push(key);
+    }
+    return result;
   }
 
   public getMailingFromTracing(tracing: IConversationTracing) {

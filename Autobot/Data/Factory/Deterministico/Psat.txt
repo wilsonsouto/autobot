@@ -1,6 +1,6 @@
+﻿import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { {{pascalCaseProjectName}}Survey } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Survey';
-import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { PhoneType } from 'models/types/PhoneType';

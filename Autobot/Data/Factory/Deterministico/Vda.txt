@@ -1,6 +1,6 @@
-import CDRLogDataFactory from 'factories/CDRLogDataFactory';
-import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
+﻿import CDRLogDataFactory from 'factories/CDRLogDataFactory';
 import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
+import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
