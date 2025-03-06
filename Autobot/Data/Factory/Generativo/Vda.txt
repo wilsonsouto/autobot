@@ -1,4 +1,4 @@
-import CDRLogGenbotDataFactory from './CDRLogGenbotDataFactory';
+﻿import CDRLogGenbotDataFactory from './CDRLogGenbotDataFactory';
 import { CDRGenbotBaseEntity } from 'models/entities/cdrBaseEntity/CDRGenbotBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
@@ -73,27 +73,20 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     Logger.info(`[${tracing.conversationId}] markingList: ${markingList}`);
     Logger.info(`[${tracing.conversationId}] lastMarking: ${lastMarking}`);
 
-    return nocStatusRepository
-      .findOne({
-        status_id: lastMarking as string,
-      })
-      .then(nocaiStatus => {
-        if (!nocaiStatus) {
-          Logger.error('Status not found for status_id: ', lastMarking);
-          return status;
-        }
+    let nocaiStatus = await nocStatusRepository.findOne({
+      status_id: lastMarking as string,
+    });
 
-        status.StatusChamada = nocaiStatus.statusChamada as string;
-        status.SubStatusIVR = nocaiStatus.subStatusIVR as string;
-        status.CodFinalizacao = nocaiStatus.codFinalizacao as string;
-        status.IdEvento = nocaiStatus.idEvento as string;
+    if (!nocaiStatus) {
+      Logger.error(`status_id not found for the marking: ${lastMarking}`);
+      return status;
+    }
 
-        return status;
-      })
-      .catch(err => {
-        Logger.error('Error retrieving Nocai status: ', err);
-        return status;
-      });
+    status.StatusChamada = nocaiStatus.statusChamada as string;
+    status.SubStatusIVR = nocaiStatus.subStatusIVR as string;
+    status.IdEvento = nocaiStatus.idEvento as string;
+
+    return status;
   }
 
   public async resolveOlosApiFromTracing(tracing: IConversationTracing): Promise<Partial<IOlosApiPayload>> {
@@ -112,24 +105,16 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
       apiPayload.callbackPhoneNumber = identificationProps.telefone;
       switch (identificationProps.periodoContato?.toLowerCase()) {
         case 'manha':
-          {
-            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
-          }
+          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
           break;
         case 'tarde':
-          {
-            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 15:00:00');
-          }
+          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 15:00:00');
           break;
         case 'noite':
-          {
-            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 18:00:00');
-          }
+          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 18:00:00');
           break;
         default:
-          {
-            apiPayload.callbackDate = '';
-          }
+          apiPayload.callbackDate = '';
           break;
       }
     } else {

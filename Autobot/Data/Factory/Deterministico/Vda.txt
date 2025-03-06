@@ -82,27 +82,20 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
       IdEvento: '',
     };
 
-    let statusId = 0;
-
-    if (statusId === 0) {
-      statusId = lastSpt;
-    }
-
     const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
 
     let nocaiStatus = await nocStatusRepository.findOne({
-      status_id: statusId as number,
+      status_id: lastSpt as number,
     });
 
     if (!nocaiStatus) {
-      nocaiStatus = await nocStatusRepository.findOne({
-        status_id: 0 as number,
-      });
+      Logger.error(`status_id not found for the spt: ${lastSpt}`);
+      return status;
     }
 
-    status.StatusChamada = nocaiStatus?.statusChamada as string;
-    status.SubStatusIVR = nocaiStatus?.subStatusIVR as string;
-    status.IdEvento = nocaiStatus?.idEvento as string;
+    status.StatusChamada = nocaiStatus.statusChamada as string;
+    status.SubStatusIVR = nocaiStatus.subStatusIVR as string;
+    status.IdEvento = nocaiStatus.idEvento as string;
 
     return status;
   }
@@ -123,24 +116,16 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
       apiPayload.callbackPhoneNumber = identificationProps.telefone;
       switch (identificationProps.periodoContato?.toLowerCase()) {
         case 'manha':
-          {
-            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
-          }
+          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 10:00:00');
           break;
         case 'tarde':
-          {
-            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 15:00:00');
-          }
+          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 15:00:00');
           break;
         case 'noite':
-          {
-            apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 18:00:00');
-          }
+          apiPayload.callbackDate = String(addDays(new Date(), 1).format('YYYY-MM-DD') + ' 18:00:00');
           break;
         default:
-          {
-            apiPayload.callbackDate = '';
-          }
+          apiPayload.callbackDate = '';
           break;
       }
     } else {
@@ -150,8 +135,8 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     }
 
     const { sptList } = this.parseScriptPointsFromTracing(tracing);
-    Logger.info(`[${tracing.conversationId}] lastSptListOlos: ${sptList.toString()}`);
     const sptRanked = await this.rankSptForTabulation(sptList);
+    Logger.info(`[${tracing.conversationId}] lastSptListOlos: ${sptList.toString()}`);
     Logger.info(`[${tracing.conversationId}] lastSptRankedListOlos: ${sptRanked.toString()}`);
 
     apiPayload.dispositionId = await this.resolveOlosStatus(tracing.conversationId, sptRanked || 0);

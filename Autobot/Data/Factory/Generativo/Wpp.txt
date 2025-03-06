@@ -1,4 +1,4 @@
-import CDRLogGenbotDataFactory from 'factories/CDRLogGenbotDataFactory';
+﻿import CDRLogGenbotDataFactory from 'factories/CDRLogGenbotDataFactory';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { CDRGenbotBaseEntity } from 'models/entities/cdrBaseEntity/CDRGenbotBaseEntity';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
@@ -68,27 +68,20 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     Logger.info(`[${tracing.conversationId}] markingList: ${markingList}`);
     Logger.info(`[${tracing.conversationId}] lastMarking: ${lastMarking}`);
 
-    return nocStatusRepository
-      .findOne({
-        status_id: lastMarking as string,
-      })
-      .then(nocaiStatus => {
-        if (!nocaiStatus) {
-          Logger.error('Status not found for status_id: ', lastMarking);
-          return status;
-        }
+    let nocaiStatus = await nocStatusRepository.findOne({
+      status_id: lastMarking as string,
+    });
 
-        status.StatusChamada = nocaiStatus.statusChamada as string;
-        status.SubStatusIVR = nocaiStatus.subStatusIVR as string;
-        status.CodFinalizacao = nocaiStatus.codFinalizacao as string;
-        status.IdEvento = nocaiStatus.idEvento as string;
+    if (!nocaiStatus) {
+      Logger.error(`status_id not found for the marking: ${lastMarking}`);
+      return status;
+    }
 
-        return status;
-      })
-      .catch(err => {
-        Logger.error('Error retrieving Nocai status: ', err);
-        return status;
-      });
+    status.StatusChamada = nocaiStatus.statusChamada as string;
+    status.SubStatusIVR = nocaiStatus.subStatusIVR as string;
+    status.IdEvento = nocaiStatus.idEvento as string;
+
+    return status;
   }
 
   public getMailingFromTracing(tracing: IConversationTracing) {
