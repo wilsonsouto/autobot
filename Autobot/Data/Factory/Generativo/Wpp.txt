@@ -1,6 +1,6 @@
 ﻿import CDRLogGenbotDataFactory from 'factories/CDRLogGenbotDataFactory';
-import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { CDRGenbotBaseEntity } from 'models/entities/cdrBaseEntity/CDRGenbotBaseEntity';
+import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
 import { PhoneType } from 'models/types/PhoneType';
