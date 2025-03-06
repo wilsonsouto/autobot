@@ -1,4 +1,4 @@
-import AspectApi from 'config/AspectApiConfig';
+﻿import AspectApi from 'config/AspectApiConfig';
 import { OlosApiP2 } from 'config/OlosApiConfig';
 import { {{pascalCaseProjectName}}Factory } from 'factories/{{pascalCaseProjectName}}Factory';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
@@ -22,7 +22,6 @@ class {{pascalCaseProjectName}}Service {
       const cdrEvents = this.cdrFactory.makeEvents(tracing);
 
       Logger.info(`[${this.name}][${tracing.conversationId}] AtendimentoObject `, atendimentoEvent);
-
       Logger.info(`[${this.name}][${tracing.conversationId}] ${cdrEvents.length} CdrEvents captured`);
 
       await {{pascalCaseProjectName}}AtendimentoRepository.insert(await atendimentoEvent);

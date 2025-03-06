@@ -3,7 +3,6 @@ import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
-import { INocApiOccurrence } from 'models/interfaces/tbotNegPadrao/InocApi';
 import { PhoneType } from 'models/types/PhoneType';
 import RogueCategory from 'models/types/RogueCategory';
 import { SolutionType } from 'models/types/SolutionType';
@@ -18,7 +17,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     Logger.info(`[${this.name}] building event...`);
     const atendimento: {{pascalCaseProjectName}}Atendimento & CDRBaseEntity = super.makeAtendimentoEvent(tracing);
     const mailing = this.getMailingFromTracing(tracing);
-    const status = await this.resolveNocApiFromTracing(tracing);
+    const status = await this.resolveNocaiStatus(tracing);
 
     atendimento.documento = mailing.cpf_cnpj;
     atendimento.origem = mailing.origem;
@@ -50,23 +49,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     return atendimento;
   }
 
-  public async resolveNocApiFromTracing(tracing: IConversationTracing): Promise<INocApiOccurrence> {
-    const apiOccurrencePayload = {} as INocApiOccurrence;
-
-    const { sptList } = this.parseScriptPointsFromTracing(tracing);
-    const sptRanked = await this.rankSptForTabulation(sptList);
-    Logger.info(`[${tracing.conversationId}] sptRanked: ${sptRanked.toString()}`);
-    Logger.info(`[${tracing.conversationId}] lastSptRanked: ${sptRanked[sptRanked.length - 1]}`);
-
-    const status = await this.resolveNocaiStatus(sptRanked[sptRanked.length - 1] || 0);
-    apiOccurrencePayload.StatusChamada = status.StatusChamada;
-    apiOccurrencePayload.SubStatusIVR = status.SubStatusIVR;
-    apiOccurrencePayload.IdEvento = status.IdEvento;
-
-    return apiOccurrencePayload;
-  }
-
-  private async resolveNocaiStatus(lastSpt: number): Promise<{
+  private async resolveNocaiStatus(tracing: IConversationTracing): Promise<{
     StatusChamada: string;
     SubStatusIVR: string;
     IdEvento: string;
@@ -78,7 +61,14 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     };
 
     const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+    
+    const { sptList } = this.parseScriptPointsFromTracing(tracing);
+    const sptRanked = await this.rankSptForTabulation(sptList);
+    const lastSpt = sptRanked[sptRanked.length - 1];
 
+    Logger.info(`[${tracing.conversationId}] spt list: ${sptRanked.toString()}`);
+    Logger.info(`[${tracing.conversationId}] last spt: ${lastSpt}`);
+    
     let nocaiStatus = await nocStatusRepository.findOne({
       status_id: lastSpt as number,
     });

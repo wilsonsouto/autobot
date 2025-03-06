@@ -3,8 +3,8 @@ import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
-import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
 import { INocApiOccurrence } from 'models/interfaces/tbotNegPadrao/InocApi';
+import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
 import { PhoneType } from 'models/types/PhoneType';
 import RogueCategory from 'models/types/RogueCategory';
 import { SolutionType } from 'models/types/SolutionType';
@@ -60,10 +60,12 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
 
     const { sptList } = this.parseScriptPointsFromTracing(tracing);
     const sptRanked = await this.rankSptForTabulation(sptList);
-    Logger.info(`[${tracing.conversationId}] sptRanked: ${sptRanked.toString()}`);
-    Logger.info(`[${tracing.conversationId}] lastSptRanked: ${sptRanked[sptRanked.length - 1]}`);
+    const lastSpt = sptRanked[sptRanked.length - 1] || 0;
+    
+    Logger.info(`[${tracing.conversationId}] spt list: ${sptRanked.toString()}`);
+    Logger.info(`[${tracing.conversationId}] last spt: ${lastSpt}`);
 
-    const status = await this.resolveNocaiStatus(sptRanked[sptRanked.length - 1] || 0);
+    const status = await this.resolveNocaiStatus(lastSpt);
     apiOccurrencePayload.StatusChamada = status.StatusChamada;
     apiOccurrencePayload.SubStatusIVR = status.SubStatusIVR;
     apiOccurrencePayload.IdEvento = status.IdEvento;

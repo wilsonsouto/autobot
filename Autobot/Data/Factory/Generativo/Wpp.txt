@@ -13,10 +13,11 @@ import { isCellPhone } from 'utils/PhoneUtils';
 export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
   private name = '{{pascalCaseProjectName}}Factory';
 
-  public makeAtendimento(tracing: IConversationTracing): CDRGenbotBaseEntity | {{pascalCaseProjectName}}Atendimento {
+  public async makeAtendimento(tracing: IConversationTracing): Promise<CDRGenbotBaseEntity | {{pascalCaseProjectName}}Atendimento> {
     Logger.info(`[${this.name}] building event...`);
     const atendimento: {{pascalCaseProjectName}}Atendimento & CDRGenbotBaseEntity = super.makeAtendimentoEvent(tracing);
     const mailing = this.getMailingFromTracing(tracing);
+    const status = await this.resolveNocaiStatus(tracing);
 
     atendimento.documento = mailing.cpf_cnpj;
     atendimento.origem = mailing.origem;
@@ -40,12 +41,10 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     atendimento.solution = this.resolveSolutionType(tracing);
     atendimento.recordFilename = tracing.getEventsByCategory(RogueCategory.Dialog).pop()?.recordFilename || '';
 
-    this.resolveNocaiStatus(tracing).then(status => {
-      atendimento.statusChamada = status.StatusChamada;
-      atendimento.subStatusIVR = status.SubStatusIVR;
-      atendimento.idEvento = status.IdEvento;
-      atendimento.idServidor = tracing.getEventsByCategory(RogueCategory.Conversation).pop()?.hostname || '';
-    });
+    atendimento.statusChamada = status.StatusChamada;
+    atendimento.subStatusIVR = status.SubStatusIVR;
+    atendimento.idEvento = status.IdEvento;
+    atendimento.idServidor = tracing.getEventsByCategory(RogueCategory.Conversation).pop()?.hostname || '';
 
     return atendimento;
   }
@@ -64,16 +63,17 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
     };
 
     const nocStatusRepository = {{pascalCaseProjectName}}NocApiStatusRepository.getRepository();
+
     const { markingList, lastMarking } = this.extractMarking(tracing);
-    Logger.info(`[${tracing.conversationId}] markingList: ${markingList}`);
-    Logger.info(`[${tracing.conversationId}] lastMarking: ${lastMarking}`);
+    Logger.info(`[${tracing.conversationId}] spt list: ${markingList}`);
+    Logger.info(`[${tracing.conversationId}] last spt: ${lastMarking}`);
 
     let nocaiStatus = await nocStatusRepository.findOne({
       status_id: lastMarking as string,
     });
 
     if (!nocaiStatus) {
-      Logger.error(`status_id not found for the marking: ${lastMarking}`);
+      Logger.error(`[${tracing.conversationId}] status_id not found for the spt: ${lastMarking}`);
       return status;
     }
 
