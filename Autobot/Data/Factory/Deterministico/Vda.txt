@@ -3,7 +3,6 @@ import { CDRBaseEntity } from 'models/entities/cdrBaseEntity/CDRBaseEntity';
 import { {{pascalCaseProjectName}}Atendimento } from 'models/entities/{{camelCaseProjectName}}/{{pascalCaseProjectName}}Atendimento';
 import { IConversationTracing } from 'models/interfaces/IConversationTracing';
 import { IOlosApiPayload } from 'models/interfaces/OlosApi/IOlosApi';
-import { INocApiOccurrence } from 'models/interfaces/tbotNegPadrao/InocApi';
 import { IMailing } from 'models/interfaces/{{camelCaseProjectName}}/IMailing';
 import { PhoneType } from 'models/types/PhoneType';
 import RogueCategory from 'models/types/RogueCategory';
