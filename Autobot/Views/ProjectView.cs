@@ -24,7 +24,7 @@ namespace Autobot.Views
 					clientName = Console.ReadLine();
 				}
 
-				Console.Write("Informe o nome do projeto (valor do campo 'Project' no arquivo 'appsettings.json'): ");
+				Console.Write("Informe o nome do projeto (valor do campo 'Project' no arquivo 'appsettings.json') no Galileo: ");
 				var projectName = Console.ReadLine();
 
 				while (!ValidationHelper.IsStringValid(projectName))
