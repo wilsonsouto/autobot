@@ -52,13 +52,11 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogGenbotDataFactory {
   private async resolveNocaiStatus(tracing: IConversationTracing): Promise<{
     StatusChamada: string;
     SubStatusIVR: string;
-    CodFinalizacao: string;
     IdEvento: string;
   }> {
     const status = {
       StatusChamada: '',
       SubStatusIVR: '',
-      CodFinalizacao: '',
       IdEvento: '',
     };
 
