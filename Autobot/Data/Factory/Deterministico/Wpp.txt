@@ -49,7 +49,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     return atendimento;
   }
 
-  private async resolveNocaiStatus(tracing: IConversationTracing): Promise<{
+  public async resolveNocaiStatus(tracing: IConversationTracing): Promise<{
     StatusChamada: string;
     SubStatusIVR: string;
     IdEvento: string;

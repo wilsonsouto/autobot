@@ -33,7 +33,7 @@ export default class {{pascalCaseProjectName}}Strategy implements IConsumerStrat
       const {{camelCaseProjectName}}Factory = new {{pascalCaseProjectName}}Factory();
 
       // Aspect (comment the lines below if you are not using this API)
-      const nocApiPayload = await {{camelCaseProjectName}}Factory.resolveNocApiFromTracing(tracing);
+      const nocApiPayload = await {{camelCaseProjectName}}Factory.resolveNocaiStatus(tracing);
       const aspectDisposition = nocApiPayload.StatusChamada ? nocApiPayload.StatusChamada : '';
       const aspectCall = await {{camelCaseProjectName}}Factory.resolveAspectFromTracing(tracing);
       await {{pascalCaseProjectName}}Service.sendAspectApiStatus(tracing, aspectCall, aspectDisposition);
