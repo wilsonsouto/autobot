@@ -18,6 +18,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     const atendimento: {{pascalCaseProjectName}}Atendimento = super.makeAtendimentoEvent(tracing);
     const mailing = this.getMailingFromTracing(tracing);
 
+    atendimento.clientCode = mailing.id || '';
     atendimento.documento = mailing.cpf_cnpj;
     atendimento.origem = mailing.origem;
     atendimento.callId = mailing.callId;
@@ -31,9 +32,6 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
 
     atendimento.telefone = String(mailing.ddd + mailing.telefone);
     atendimento.phoneType = this.resolvePhoneType(mailing.telefone);
-
-    atendimento.clientCode = mailing.id || '';
-    atendimento.phoneType = this.resolvePhoneType(mailing?.telefone);
 
     if (!atendimento.vdn) {
       atendimento.vdn = this.resolveVdnFromTracing(tracing);
