@@ -19,7 +19,6 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     const mailing = this.getMailingFromTracing(tracing);
     const status = await this.resolveNocaiStatus(tracing);
 
-    atendimento.clientCode = mailing.id || '';
     atendimento.documento = mailing.cpf_cnpj;
     atendimento.origem = mailing.origem;
     atendimento.callId = mailing.callId;
@@ -36,6 +35,7 @@ export class {{pascalCaseProjectName}}Factory extends CDRLogDataFactory {
     if (!atendimento.vdn) {
       atendimento.vdn = this.resolveVdnFromTracing(tracing);
     }
+    atendimento.clientCode = mailing.id || '';
 
     atendimento.dna_resultConfidence = this.getConfidencesEvents(tracing);
     atendimento.solution = this.resolveSolutionType(tracing);
